@@ -159,6 +159,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Scene\Object\transform.cpp" />
+    <ClCompile Include="src\Scene\scene.cpp" />
+    <ClCompile Include="src\Scene\Object\object.cpp" />
+    <ClCompile Include="src\application.cpp" />
     <ClCompile Include="dependencies\imgui\imgui.cpp" />
     <ClCompile Include="dependencies\imgui\imgui_demo.cpp" />
     <ClCompile Include="dependencies\imgui\imgui_draw.cpp" />
@@ -178,6 +182,10 @@
     <ClCompile Include="src\Window\window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Scene\Object\transform.h" />
+    <ClInclude Include="src\Scene\scene.h" />
+    <ClInclude Include="src\Scene\Object\object.h" />
+    <ClInclude Include="src\application.h" />
     <ClInclude Include="src\EventSystem\EventManager\eventManager.h" />
     <ClInclude Include="src\EventSystem\EventManager\eventType.h" />
     <ClInclude Include="src\EventSystem\Keyboard\keyboard.h" />

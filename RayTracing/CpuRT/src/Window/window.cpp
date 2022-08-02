@@ -61,6 +61,8 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 Window::Window(WindowProperties properties)
 	: properties(std::move(properties))
 {
+	glfwInit();
+
 	this->createGLFWWindow();
 	this->initializeOpenGL();
 	this->initImGUI();
@@ -85,6 +87,8 @@ Window::~Window()
 	{
 		glfwDestroyWindow(this->glfwWindow);
 	}
+
+	glfwTerminate();
 }
 
 Window& Window::operator=(Window&& other) noexcept
@@ -271,7 +275,7 @@ void Window::initImGUI()
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	auto io = ImGui::GetIO(); (void)io;
+	auto& io = ImGui::GetIO(); (void)io;
 
 	ImGui::StyleColorsDark();
 	ImGui_ImplGlfw_InitForOpenGL(this->glfwWindow, false);
