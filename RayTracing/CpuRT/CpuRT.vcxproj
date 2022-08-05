@@ -159,6 +159,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Scene\Object\sphere.cpp" />
     <ClCompile Include="src\Scene\Object\transform.cpp" />
     <ClCompile Include="src\Scene\scene.cpp" />
     <ClCompile Include="src\Scene\Object\object.cpp" />
@@ -182,6 +183,8 @@
     <ClCompile Include="src\Window\window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="plane.h" />
+    <ClInclude Include="src\Scene\Object\sphere.h" />
     <ClInclude Include="src\Scene\Object\transform.h" />
     <ClInclude Include="src\Scene\scene.h" />
     <ClInclude Include="src\Scene\Object\object.h" />
