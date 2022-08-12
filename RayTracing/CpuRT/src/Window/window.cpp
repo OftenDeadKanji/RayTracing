@@ -279,5 +279,5 @@ void Window::initImGUI()
 
 	ImGui::StyleColorsDark();
 	ImGui_ImplGlfw_InitForOpenGL(this->glfwWindow, false);
-	ImGui_ImplOpenGL3_Init("#version 450");
+	ImGui_ImplOpenGL3_Init("#version 430");
 }
