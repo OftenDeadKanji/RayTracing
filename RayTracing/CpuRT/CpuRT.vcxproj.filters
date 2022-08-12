@@ -140,8 +140,11 @@
     <ClInclude Include="src\Scene\Object\sphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="plane.h">
+    <ClInclude Include="src\Scene\Object\plane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="scene.rt" />
   </ItemGroup>
 </Project>

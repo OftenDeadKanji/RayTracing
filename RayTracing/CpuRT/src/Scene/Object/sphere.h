@@ -5,11 +5,14 @@ class Sphere
 	: public Object
 {
 public:
-	Sphere(vec3 position);
-	Sphere(Transform transform);
+	Sphere();
+	Sphere(float radius, vec3 position);
+	Sphere(float radius, Transform transform);
 
 	bool isColliding(const Sphere* other) const override;
+
+	void setRadius(float radius);
 private:
-	float radius;
+	float m_radius;
 };
 

@@ -183,7 +183,7 @@
     <ClCompile Include="src\Window\window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="plane.h" />
+    <ClInclude Include="src\Scene\Object\plane.h" />
     <ClInclude Include="src\Scene\Object\sphere.h" />
     <ClInclude Include="src\Scene\Object\transform.h" />
     <ClInclude Include="src\Scene\scene.h" />
@@ -203,6 +203,9 @@
     <ClInclude Include="src\Utilities\types.h" />
     <ClInclude Include="src\Window\windowProperties.h" />
     <ClInclude Include="src\Window\window.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="scene.rt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
