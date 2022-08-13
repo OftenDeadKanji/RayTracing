@@ -3,7 +3,7 @@
 namespace MVC
 {
 	Controller::Controller()
-		: m_view(*this, WindowProperties(1600, 900, "CPU RayTracing"))
+		: m_view(*this, WindowProperties(1600, 900, "CPU RayTracing")), m_model(vec2( 1600, 900 ))
 	{
 		initView();
 	}
@@ -27,7 +27,9 @@ namespace MVC
 	}
 
 	void Controller::update(float deltaTime)
-	{}
+	{
+		m_model.update();
+	}
 
 	void Controller::render(float deltaTime)
 	{
