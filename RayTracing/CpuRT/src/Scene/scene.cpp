@@ -21,6 +21,11 @@ Scene::Scene(std::ifstream& sceneFile)
 	initScene(sceneFile);
 }
 
+std::vector<std::unique_ptr<Object>>& Scene::getSceneObjects()
+{
+	return m_sceneObjects;
+}
+
 void Scene::initScene(std::ifstream& sceneFile)
 {
 	std::string line;
@@ -50,6 +55,10 @@ void Scene::readSphere(std::ifstream& sceneFile)
 	{
 		std::getline(sceneFile, attribute);
 		size_t equalSignPosition = attribute.find("=");
+		if (equalSignPosition == attribute.npos)
+		{
+			continue;
+		}
 		std::string name = attribute.substr(0, equalSignPosition);
 		std::string value = attribute.substr(equalSignPosition + 1, attribute.size() - (equalSignPosition + 1));
 
