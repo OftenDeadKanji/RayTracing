@@ -1,4 +1,5 @@
 #include "application.h"
+#include <iostream>
 
 Application::Application()
 {
@@ -10,7 +11,7 @@ void Application::run()
 	while(m_controller.MainLoopCondition)
 	{
 		const float deltaTime = calculateDeltaTime();
-
+		//std::cout << deltaTime << '\n';
 		m_controller.processInput(deltaTime);
 		m_controller.update(deltaTime);
 		m_controller.render(deltaTime);
@@ -20,7 +21,7 @@ void Application::run()
 float Application::calculateDeltaTime()
 {
 	const auto currentTimePoint = std::chrono::high_resolution_clock::now();
-	const std::chrono::high_resolution_clock::duration duration = m_lastFrameStart - currentTimePoint;
+	const std::chrono::high_resolution_clock::duration duration = currentTimePoint - m_lastFrameStart;
 
 	m_lastFrameStart = std::chrono::high_resolution_clock::now();
 
