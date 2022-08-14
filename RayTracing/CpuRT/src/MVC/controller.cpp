@@ -3,7 +3,7 @@
 namespace MVC
 {
 	Controller::Controller()
-		: m_view(*this, WindowProperties(1600, 900, "CPU RayTracing")), m_model(vec2( 1600, 900 ))
+		: m_view(*this, WindowProperties(1600, 900, "CPU RayTracing")), m_model(vec2( 1024, 1024 ))
 	{
 		initView();
 	}
@@ -14,6 +14,11 @@ namespace MVC
 		{
 			closeWindowCallback();
 		});
+
+		auto& textureVector = m_model.ScreenTexture;
+		auto textureSize = m_model.getTextureResolution();
+
+		m_view.generateTexture(textureVector, textureSize.x, textureSize.y);
 	}
 
 	bool Controller::getMainLoopCondition() const
@@ -33,7 +38,10 @@ namespace MVC
 
 	void Controller::render(float deltaTime)
 	{
-		m_view.render(deltaTime);
+		auto& textureVector = m_model.ScreenTexture;
+		auto textureSize = m_model.getTextureResolution();
+
+		m_view.render(deltaTime, textureVector, textureSize.x, textureSize.y);
 	}
 
 	void Controller::closeWindowCallback()

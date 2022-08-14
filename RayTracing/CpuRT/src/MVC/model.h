@@ -3,6 +3,7 @@
 #include "../Scene/camera.h"
 #include "stb_image/stb_image.h"
 #include <array>
+#include "../Intersection/ray.h"
 
 namespace MVC
 {
@@ -12,12 +13,19 @@ namespace MVC
 		Model(vec2i textureResolution);
 
 		void update();
+
+		const std::vector<float>& getScreenTexture() const;
+		__declspec(property(get = getScreenTexture)) std::vector<float> ScreenTexture;
+
+		vec2i getTextureResolution() const;
 	private:
+		Ray generateRay(int x, int y);
+		void setTexturePixelColor(int x, int y, vec3 color);
 
 		Scene m_scene;
 		Camera m_camera;
-		std::vector<std::vector<std::array<float, 3>>> m_screenTexture;
+		std::vector<float> m_screenTexture;
 
-		int iterator;
+		int iteratorX, iteratorY;
 	};
 }
