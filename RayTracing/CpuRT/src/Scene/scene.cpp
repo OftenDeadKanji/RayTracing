@@ -3,6 +3,7 @@
 #include "Object/sphere.h"
 
 Scene::Scene(const std::string& sceneFilePath)
+	: m_backgroundColor(0.2f, 0.2f, 0.2f)
 {
 	std::ifstream sceneFile(sceneFilePath, std::ios::in);
 
@@ -17,6 +18,7 @@ Scene::Scene(const std::string& sceneFilePath)
 }
 
 Scene::Scene(std::ifstream& sceneFile)
+	: m_backgroundColor(0.2f, 0.2f, 0.2f)
 {
 	initScene(sceneFile);
 }
@@ -24,6 +26,25 @@ Scene::Scene(std::ifstream& sceneFile)
 std::vector<std::unique_ptr<Object>>& Scene::getSceneObjects()
 {
 	return m_sceneObjects;
+}
+
+IntersectionInfo Scene::intersect(const Ray& ray) const
+{
+	for (auto& sceneObjectPtr : m_sceneObjects)
+	{
+		std::vector<vec3> points;
+		if (sceneObjectPtr->isIntersecting(&ray, points))
+		{
+			return IntersectionInfo(true, points, sceneObjectPtr.get());
+		}
+	}
+
+	return IntersectionInfo::NoIntersection;
+}
+
+vec3 Scene::getBackgroundColor() const
+{
+	return m_backgroundColor;
 }
 
 void Scene::initScene(std::ifstream& sceneFile)

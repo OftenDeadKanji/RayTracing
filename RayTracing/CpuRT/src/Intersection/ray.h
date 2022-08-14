@@ -1,5 +1,5 @@
 #pragma once
-#include "object.h"
+#include "../Utilities/types.h"
 #include <limits>
 
 class Ray

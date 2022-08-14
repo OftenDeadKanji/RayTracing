@@ -1,5 +1,5 @@
 #include "sphere.h"
-#include "ray.h"
+#include "../../Intersection/ray.h"
 #include <cmath>
 
 Sphere::Sphere()

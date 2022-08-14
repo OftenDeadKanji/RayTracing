@@ -87,7 +87,10 @@
     <ClCompile Include="src\Scene\camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Scene\Object\ray.cpp">
+    <ClCompile Include="src\Intersection\ray.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Intersection\intersection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -155,7 +158,10 @@
     <ClInclude Include="src\Scene\camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Scene\Object\ray.h">
+    <ClInclude Include="src\Intersection\ray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Intersection\intersection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

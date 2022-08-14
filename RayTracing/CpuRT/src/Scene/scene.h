@@ -4,6 +4,7 @@
 #include <string>
 #include <fstream>
 #include <memory>
+#include "../Intersection/intersection.h"
 
 class Scene
 {
@@ -14,10 +15,16 @@ public:
 	std::vector<std::unique_ptr<Object>>& getSceneObjects();
 
 	__declspec(property(get=getSceneObjects)) std::vector<std::unique_ptr<Object>> SceneObjects;
+
+	IntersectionInfo intersect(const Ray& ray) const;
+
+	vec3 getBackgroundColor() const;
 private:
 	void initScene(std::ifstream& sceneFile);
 	void readSphere(std::ifstream& sceneFile);
 
 	std::vector<std::unique_ptr<Object>> m_sceneObjects;
+
+	vec3 m_backgroundColor;
 };
 
