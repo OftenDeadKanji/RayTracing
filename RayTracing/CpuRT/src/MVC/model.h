@@ -35,5 +35,6 @@ namespace MVC
 		int iteratorX, iteratorY;
 
 		std::vector<std::thread> threadPool;
+		std::vector<bool> threadTaskTermination;
 	};
 }

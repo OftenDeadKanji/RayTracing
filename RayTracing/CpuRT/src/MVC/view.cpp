@@ -15,6 +15,7 @@ namespace MVC
 	View::~View()
 	{
 		glDeleteTextures(1, &m_texture);
+		glDeleteProgram(m_shader);
 		glDeleteBuffers(1, &m_textureQuadVBO);
 		glDeleteVertexArrays(1, &m_textureQuadVAO);
 	}

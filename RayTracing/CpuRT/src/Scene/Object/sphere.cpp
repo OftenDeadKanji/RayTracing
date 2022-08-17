@@ -45,8 +45,8 @@ bool Sphere::isIntersecting(const Ray* ray, std::vector<vec3>& intersectionPoint
 		return true;
 	}
 
-	float t1 = (b - std::sqrt(delta)) / (2.0f * a);
-	float t2 = (b + std::sqrt(delta)) / (2.0f * a);
+	float t1 = (-b - std::sqrt(delta)) / (2.0f * a);
+	float t2 = (-b + std::sqrt(delta)) / (2.0f * a);
 
 	vec3 point1 = ray->Origin + t1 * ray->Direction;
 	vec3 point2 = ray->Origin + t2 * ray->Direction;
