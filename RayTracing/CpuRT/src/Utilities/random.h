@@ -12,8 +12,7 @@ public:
 	Random(const Random&) = delete;
 	Random& operator=(const Random&) = delete;
 
-	Random* getInstancePtr();
-	__declspec(property(get = getInstancePtr)) Random* InstancePtr;
+	static Random* getInstancePtr();
 
 	float value();
 	vec2 vector2();
