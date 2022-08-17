@@ -1,6 +1,5 @@
 #include <iostream>
 #include "application.h"
-#include "stb_image/stb_image.h"
 
 int main(int argc, char** argv)
 {
@@ -15,9 +14,6 @@ int main(int argc, char** argv)
 	}
 	std::cout << std::endl;
 #endif
-	//od lewj do prawej
-	//od gory do dolu
-	//r g b
 
 	Application app;
 	app.run();
