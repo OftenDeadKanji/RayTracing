@@ -159,9 +159,9 @@ Ray MVC::Model::generateRay(int x, int y)
 
 void MVC::Model::setTexturePixelColor(int x, int y, vec3 color)
 {
-	int flippedY = m_camera.Resolution.y - y - 1;
+	//int flippedY = m_camera.Resolution.y - y - 1;
 
-	size_t coord = static_cast<size_t>(flippedY * m_camera.Resolution.x + x);
+	size_t coord = static_cast<size_t>(y * m_camera.Resolution.x + x);
 
 	m_screenTexture[coord * 3] = color.r;
 	m_screenTexture[coord * 3 + 1] = color.g;
