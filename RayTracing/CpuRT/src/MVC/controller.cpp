@@ -6,6 +6,7 @@ namespace MVC
 		: m_view(*this, WindowProperties(1600, 900, "CPU RayTracing")), m_model(vec2( 1024, 1024 ))
 	{
 		initView();
+		m_model.startThreadedGenerating();
 	}
 
 	void Controller::initView()
@@ -38,7 +39,7 @@ namespace MVC
 
 	void Controller::render(float deltaTime)
 	{
-		auto& textureVector = m_model.ScreenTexture;
+		const auto& textureVector = m_model.getScreenTexture();
 		auto textureSize = m_model.getTextureResolution();
 
 		m_view.render(deltaTime, textureVector, textureSize.x, textureSize.y);

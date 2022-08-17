@@ -1,14 +1,35 @@
 #include "model.h"
-#include <numbers>
 
 MVC::Model::Model(vec2i textureResolution)
 	: m_camera(textureResolution, glm::radians(45.0f)), m_scene(), iteratorX(0), iteratorY(0)
 {
 	m_screenTexture.resize(static_cast<size_t>(textureResolution.x * textureResolution.y * 3));
 
+	int threadsCount = std::thread::hardware_concurrency();
+
+	for (int i = 0; i < threadsCount; i++)
+	{
+		threadPool.push_back(std::thread());
+	}
+}
+
+MVC::Model::~Model()
+{
+	for (auto& thread : threadPool)
+	{
+		if (thread.joinable())
+		{
+			thread.join();
+		}
+	}
 }
 
 void MVC::Model::update()
+{
+	//generateImageOneIteration();
+}
+
+void MVC::Model::generateImageOneIteration()
 {
 	if (iteratorX < m_camera.Resolution.x)
 	{
@@ -38,6 +59,29 @@ void MVC::Model::update()
 	}
 }
 
+void MVC::Model::generateImagePart(int threadId, int fromX, int toX, int fromY, int toY)
+{
+	for (int i = fromX; i <= toX; ++i)
+	{
+		for(int j = fromY; j <= toY; ++j)
+		{
+			Ray ray = generateRay(i, j);
+			IntersectionInfo info = m_scene.intersect(ray);
+
+			if (info.intersected)
+			{
+				vec3 color = { info.intersectedObject->getColor().r,info.intersectedObject->getColor().g, info.intersectedObject->getColor().b };
+				setTexturePixelColor(i, j, color);
+			}
+			else
+			{
+				vec3 color = { m_scene.getBackgroundColor().r,m_scene.getBackgroundColor().g,m_scene.getBackgroundColor().b };
+				setTexturePixelColor(i, j, color);
+			}
+		}
+	}
+}
+
 const std::vector<float>& MVC::Model::getScreenTexture() const
 {
 	return m_screenTexture;
@@ -46,6 +90,11 @@ const std::vector<float>& MVC::Model::getScreenTexture() const
 vec2i MVC::Model::getTextureResolution() const
 {
 	return m_camera.Resolution;
+}
+
+void MVC::Model::startThreadedGenerating()
+{
+	this->threadPool[0] = std::thread(&MVC::Model::generateImagePart, this, 0, 0, m_camera.Resolution.x - 1, 0, m_camera.Resolution.y - 1);
 }
 
 Ray MVC::Model::generateRay(int x, int y)
@@ -76,7 +125,7 @@ void MVC::Model::setTexturePixelColor(int x, int y, vec3 color)
 {
 	int flippedX = m_camera.Resolution.x - x - 1;
 	
-	size_t coord = flippedX * m_camera.Resolution.y + y;
+	size_t coord = static_cast<size_t>(flippedX * m_camera.Resolution.y + y);
 
 	m_screenTexture[coord * 3] = color.r;
 	m_screenTexture[coord * 3 + 1] = color.g;
