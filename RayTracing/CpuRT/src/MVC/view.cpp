@@ -90,6 +90,8 @@ namespace MVC
 
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_FLOAT, texture.data());
 		glGenerateMipmap(GL_TEXTURE_2D);
+
+		updateQuadTextureCoords(vec2(width, height));
 	}
 
 	void View::initRendering()
@@ -196,5 +198,29 @@ namespace MVC
 
 		glDeleteShader(vertexShader);
 		glDeleteShader(fragmentShader);
+	}
+
+	void View::updateQuadTextureCoords(vec2 textureResolution)
+	{
+		vec2 windowSize = window.getSize();
+		bool isWindowWidthBigger = windowSize.x >= windowSize.y;
+
+		if (isWindowWidthBigger)
+		{
+			float aspectRatio = static_cast<float>(windowSize.x) / windowSize.y;
+
+			float upperBoundary[] = { 1.0 - 0.5f * (1.0f - 1.0f / aspectRatio) };
+			float lowerBoundary[] = { 0.5f * (1.0f - 1.0f / aspectRatio) };
+
+			glBindBuffer(GL_ARRAY_BUFFER, m_textureQuadVBO);
+			
+			glBufferSubData(GL_ARRAY_BUFFER, 4 * sizeof(float), 1 * sizeof(float), upperBoundary);
+			glBufferSubData(GL_ARRAY_BUFFER, 9 * sizeof(float), 1 * sizeof(float), lowerBoundary);
+			glBufferSubData(GL_ARRAY_BUFFER, 14 * sizeof(float), 1 * sizeof(float), upperBoundary);
+
+			glBufferSubData(GL_ARRAY_BUFFER, 19 * sizeof(float), 1 * sizeof(float), upperBoundary);
+			glBufferSubData(GL_ARRAY_BUFFER, 24 * sizeof(float), 1 * sizeof(float), lowerBoundary);
+			glBufferSubData(GL_ARRAY_BUFFER, 29 * sizeof(float), 1 * sizeof(float), lowerBoundary);
+		}
 	}
 }

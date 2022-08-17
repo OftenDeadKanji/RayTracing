@@ -21,6 +21,7 @@ namespace MVC
 		void generateTexture(const std::vector<float>& texture, int width, int height);
 	private:
 		void initRendering();
+		void updateQuadTextureCoords(vec2 textureResolution);
 
 		Controller* controller;
 		Window window;
@@ -29,6 +30,7 @@ namespace MVC
 #pragma region Callbacks
 		std::function<void(void)> m_windowCloseCallback;
 #pragma endregion
+
 		GLuint m_textureQuadVAO;
 		GLuint m_textureQuadVBO;
 		GLuint m_texture;

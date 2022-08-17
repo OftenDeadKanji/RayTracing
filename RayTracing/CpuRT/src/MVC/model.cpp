@@ -63,7 +63,7 @@ void MVC::Model::generateImagePart(int threadId, int fromX, int toX, int fromY, 
 {
 	for (int i = fromX; i <= toX; ++i)
 	{
-		for(int j = fromY; j <= toY; ++j)
+		for (int j = fromY; j <= toY; ++j)
 		{
 			Ray ray = generateRay(i, j);
 			IntersectionInfo info = m_scene.intersect(ray);
@@ -124,7 +124,7 @@ Ray MVC::Model::generateRay(int x, int y)
 void MVC::Model::setTexturePixelColor(int x, int y, vec3 color)
 {
 	int flippedX = m_camera.Resolution.x - x - 1;
-	
+
 	size_t coord = static_cast<size_t>(flippedX * m_camera.Resolution.y + y);
 
 	m_screenTexture[coord * 3] = color.r;
