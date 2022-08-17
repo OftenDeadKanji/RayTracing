@@ -76,38 +76,49 @@ void MVC::Model::generateImagePart(int threadId, int fromX, int toX, int fromY, 
 			{
 				return;
 			}
+			
+			vec3 color = m_scene.getBackgroundColor();
 
 			Ray ray = generateRay(i, j);
 			IntersectionInfo info = m_scene.intersect(ray);
-
+			
 			if (info.intersected)
 			{
 				size_t closestPointIndex = 0;
 				for (auto n = 1; n < info.intersectionPoints.size(); ++n)
 				{
-					float closestDist = glm::distance(ray.Origin, info.intersectionPoints[closestPointIndex]);
-					float newDist = glm::distance(ray.Origin, info.intersectionPoints[n]);
-
-					if (closestDist > newDist)
+					if (info.intersectionPoints[closestPointIndex].side == IntersectionPoint::FaceSide::front)
 					{
-						closestPointIndex = n;
+						//found first front-sided point
+
+						for (auto m = n + 1; n < info.intersectionPoints.size(); ++n)
+						{
+							if (info.intersectionPoints[closestPointIndex].side == IntersectionPoint::FaceSide::front)
+							{
+								float closestDist = glm::distance(ray.Origin, info.intersectionPoints[closestPointIndex].position);
+								float newDist = glm::distance(ray.Origin, info.intersectionPoints[n].position);
+
+								if (closestDist > newDist)
+								{
+									closestPointIndex = n;
+								}
+							}
+						}
+
+						IntersectionPoint closestPoint = info.intersectionPoints[closestPointIndex];
+
+						vec3 objectColor = info.intersectedObject->getColor();
+						vec3 position = info.intersectionPoints[closestPointIndex].position;
+						vec3 normal = glm::normalize(info.intersectionPoints[closestPointIndex].normal);
+						vec3 lightDirection = glm::normalize(vec3(-0.5f, -0.5f, -0.5f));
+						vec3 viewDirection = glm::normalize(vec3(ray.Direction));
+
+						color = Shading::getColor_Phong(objectColor, position, normal, lightDirection, viewDirection);
 					}
 				}
-				
-				vec3 objectColor = info.intersectedObject->getColor();
-				vec3 closestPoint = info.intersectionPoints[closestPointIndex];
-				vec3 closestPointNormal = glm::normalize(info.intersectionPointsNormals[closestPointIndex]);
-				vec3 lightDirection = glm::normalize(vec3(-0.5f, -0.5f, -0.5f));
-				vec3 viewDirection = glm::normalize(vec3(ray.Direction));
+			}
 
-				vec3 color = closestPointNormal;//Shading::getColor_Phong(objectColor, closestPoint, closestPointNormal, lightDirection, viewDirection);
-				setTexturePixelColor(i, j, color);
-			}
-			else
-			{
-				vec3 color = { m_scene.getBackgroundColor().r,m_scene.getBackgroundColor().g,m_scene.getBackgroundColor().b };
-				setTexturePixelColor(i, j, color);
-			}
+			setTexturePixelColor(i, j, color);
 		}
 	}
 }
@@ -124,7 +135,7 @@ vec2i MVC::Model::getTextureResolution() const
 
 void MVC::Model::startThreadedGenerating()
 {
-	int threadsCount = threadPool.size();
+	auto threadsCount = threadPool.size();
 	
 	float division = 1.0f / threadsCount;
 	//int rangeX = std::ceil(m_camera.Resolution.x * division);
@@ -163,7 +174,7 @@ Ray MVC::Model::generateRay(int x, int y)
 	auto u = static_cast<float>(x) / (width - 1);
 	auto v = 1.0f - static_cast<float>(y) / (height - 1);
 
-	vec3 rayDirection = vec3(lowerLeftCorner + u * horizontal + v * vertical - rayOrigin);
+	vec3 rayDirection = glm::normalize(vec3(lowerLeftCorner + u * horizontal + v * vertical - rayOrigin));
 
 	return Ray(rayOrigin, rayDirection);
 }

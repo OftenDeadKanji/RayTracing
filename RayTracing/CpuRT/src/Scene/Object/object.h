@@ -2,6 +2,7 @@
 #include "../../Utilities/types.h"
 #include "transform.h"
 #include <vector>
+#include "../../Intersection/intersectionPoint.h"
 
 class Ray;
 
@@ -13,7 +14,7 @@ public:
 	Object(Transform transform);
 	virtual ~Object() = default;
 
-	virtual bool isIntersecting(const Ray* ray, std::vector<vec3>& intersectionPoints, std::vector<vec3>& intersectionPointsNormals) const = 0;
+	virtual bool isIntersecting(const Ray* ray, std::vector<IntersectionPoint>& intersectionPoints) const = 0;
 
 	void setPosition(vec3 position);
 

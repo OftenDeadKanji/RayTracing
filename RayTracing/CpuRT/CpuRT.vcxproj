@@ -160,8 +160,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Intersection\intersectionPoint.cpp" />
     <ClCompile Include="src\Shading\shading.cpp" />
-    <ClCompile Include="src\Intersection\intersection.cpp" />
+    <ClCompile Include="src\Intersection\intersectionInfo.cpp" />
     <ClCompile Include="src\Intersection\ray.cpp" />
     <ClCompile Include="src\Scene\camera.cpp" />
     <ClCompile Include="dependencies\src\stb_image.cpp" />
@@ -189,8 +190,9 @@
     <ClCompile Include="src\Window\window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Intersection\intersectionPoint.h" />
     <ClInclude Include="src\Shading\shading.h" />
-    <ClInclude Include="src\Intersection\intersection.h" />
+    <ClInclude Include="src\Intersection\intersectionInfo.h" />
     <ClInclude Include="src\Intersection\ray.h" />
     <ClInclude Include="src\Scene\camera.h" />
     <ClInclude Include="src\Scene\Object\plane.h" />

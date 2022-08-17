@@ -90,10 +90,13 @@
     <ClCompile Include="src\Intersection\ray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Intersection\intersection.cpp">
+    <ClCompile Include="src\Intersection\intersectionInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Shading\shading.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Intersection\intersectionPoint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -164,10 +167,13 @@
     <ClInclude Include="src\Intersection\ray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Intersection\intersection.h">
+    <ClInclude Include="src\Intersection\intersectionInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Shading\shading.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Intersection\intersectionPoint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

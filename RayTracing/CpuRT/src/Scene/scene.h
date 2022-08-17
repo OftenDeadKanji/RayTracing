@@ -4,7 +4,7 @@
 #include <string>
 #include <fstream>
 #include <memory>
-#include "../Intersection/intersection.h"
+#include "../Intersection/intersectionInfo.h"
 
 class Scene
 {

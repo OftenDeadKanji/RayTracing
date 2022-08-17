@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "intersectionPoint.h"
 #include "../Utilities/types.h"
 
 class Object;
@@ -8,13 +9,12 @@ struct IntersectionInfo
 {
 public:
 	IntersectionInfo();
-	IntersectionInfo(bool intersected, std::vector<vec3> intersectionPoints, const Object* intersectedObject, std::vector<vec3> intersectionPointsNormals);
+	IntersectionInfo(bool intersected, std::vector<IntersectionPoint> intersectionPoints, const Object* intersectedObject);
 	
 	static const IntersectionInfo NoIntersection;
 
 	bool intersected;
-	std::vector<vec3> intersectionPoints;
-	std::vector<vec3> intersectionPointsNormals;
+	std::vector<IntersectionPoint> intersectionPoints;
 	const Object* intersectedObject;
 	//const Ray* intersectingRay; ?
 };
