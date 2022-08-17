@@ -25,7 +25,7 @@ namespace MVC
 
 		void startThreadedGenerating();
 	private:
-		Ray generateRay(int x, int y);
+		Ray generateRay(float x, float y);
 		void setTexturePixelColor(int x, int y, vec3 color);
 
 		Scene m_scene;
@@ -33,6 +33,8 @@ namespace MVC
 		std::vector<float> m_screenTexture;
 
 		int iteratorX, iteratorY;
+
+		int sampelsPerPixel;
 
 		std::vector<std::thread> threadPool;
 		std::vector<bool> threadTaskTermination;

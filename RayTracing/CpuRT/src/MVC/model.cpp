@@ -1,8 +1,9 @@
 #include "model.h"
 #include "../Shading/shading.h"
+#include "../Utilities/random.h"
 
 MVC::Model::Model(vec2i textureResolution)
-	: m_camera(textureResolution, glm::radians(45.0f)), m_scene(), iteratorX(0), iteratorY(0)
+	: m_camera(textureResolution, glm::radians(45.0f)), m_scene(), sampelsPerPixel(4), iteratorX(0), iteratorY(0)
 {
 	m_screenTexture.resize(static_cast<size_t>(textureResolution.x * textureResolution.y * 3));
 
@@ -35,7 +36,7 @@ void MVC::Model::update()
 {
 	//generateImageOneIteration();
 }
-
+[[depricated]]
 void MVC::Model::generateImageOneIteration()
 {
 	if (iteratorX < m_camera.Resolution.x)
@@ -68,56 +69,67 @@ void MVC::Model::generateImageOneIteration()
 
 void MVC::Model::generateImagePart(int threadId, int fromX, int toX, int fromY, int toY)
 {
+	Random* random = Random::getInstancePtr();
 	for (int i = fromX; i <= toX; ++i)
 	{
 		for (int j = fromY; j <= toY; ++j)
 		{
-			if (threadTaskTermination[threadId])
+			vec3 color(0.0f);
+			for (int s = 0; s < sampelsPerPixel; ++s)
 			{
-				return;
-			}
-			
-			vec3 color = m_scene.getBackgroundColor();
-
-			Ray ray = generateRay(i, j);
-			IntersectionInfo info = m_scene.intersect(ray);
-			
-			if (info.intersected)
-			{
-				size_t closestPointIndex = 0;
-				for (auto n = 1; n < info.intersectionPoints.size(); ++n)
+				if (threadTaskTermination[threadId])
 				{
-					if (info.intersectionPoints[closestPointIndex].side == IntersectionPoint::FaceSide::front)
+					return;
+				}
+
+				vec3 colorToAdd = m_scene.getBackgroundColor();
+				
+				float u = i + random->value();
+				float v = j + random->value();
+				
+				Ray ray = generateRay(u, v);
+				IntersectionInfo info = m_scene.intersect(ray);
+
+				if (info.intersected)
+				{
+					size_t closestPointIndex = 0;
+					for (auto n = 1; n < info.intersectionPoints.size(); ++n)
 					{
-						//found first front-sided point
-
-						for (auto m = n + 1; n < info.intersectionPoints.size(); ++n)
+						if (info.intersectionPoints[closestPointIndex].side == IntersectionPoint::FaceSide::front)
 						{
-							if (info.intersectionPoints[closestPointIndex].side == IntersectionPoint::FaceSide::front)
-							{
-								float closestDist = glm::distance(ray.Origin, info.intersectionPoints[closestPointIndex].position);
-								float newDist = glm::distance(ray.Origin, info.intersectionPoints[n].position);
+							//found first front-sided point
 
-								if (closestDist > newDist)
+							for (auto m = n + 1; n < info.intersectionPoints.size(); ++n)
+							{
+								if (info.intersectionPoints[closestPointIndex].side == IntersectionPoint::FaceSide::front)
 								{
-									closestPointIndex = n;
+									float closestDist = glm::distance(ray.Origin, info.intersectionPoints[closestPointIndex].position);
+									float newDist = glm::distance(ray.Origin, info.intersectionPoints[n].position);
+
+									if (closestDist > newDist)
+									{
+										closestPointIndex = n;
+									}
 								}
 							}
+
+							IntersectionPoint closestPoint = info.intersectionPoints[closestPointIndex];
+
+							vec3 objectColor = info.intersectedObject->getColor();
+							vec3 position = info.intersectionPoints[closestPointIndex].position;
+							vec3 normal = glm::normalize(info.intersectionPoints[closestPointIndex].normal);
+							vec3 lightDirection = glm::normalize(vec3(-0.5f, -0.5f, -0.5f));
+							vec3 viewDirection = glm::normalize(vec3(ray.Direction));
+
+							colorToAdd = Shading::getColor_Phong(objectColor, position, normal, lightDirection, viewDirection);
+							break;
 						}
-
-						IntersectionPoint closestPoint = info.intersectionPoints[closestPointIndex];
-
-						vec3 objectColor = info.intersectedObject->getColor();
-						vec3 position = info.intersectionPoints[closestPointIndex].position;
-						vec3 normal = glm::normalize(info.intersectionPoints[closestPointIndex].normal);
-						vec3 lightDirection = glm::normalize(vec3(-0.5f, -0.5f, -0.5f));
-						vec3 viewDirection = glm::normalize(vec3(ray.Direction));
-
-						color = Shading::getColor_Phong(objectColor, position, normal, lightDirection, viewDirection);
 					}
 				}
+				color += colorToAdd;
 			}
 
+			color /= sampelsPerPixel;
 			setTexturePixelColor(i, j, color);
 		}
 	}
@@ -155,7 +167,7 @@ void MVC::Model::startThreadedGenerating()
 	}
 }
 
-Ray MVC::Model::generateRay(int x, int y)
+Ray MVC::Model::generateRay(float x, float y)
 {
 	int width = m_camera.Resolution.x;
 	int height = m_camera.Resolution.y;
