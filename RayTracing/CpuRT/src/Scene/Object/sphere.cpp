@@ -22,19 +22,19 @@ bool Sphere::isIntersecting(const Ray* ray, std::vector<vec3>& intersectionPoint
 	//at2 + bt + c = 0
 
 	float a = glm::dot(ray->Direction, ray->Direction);
-	float b = 2 * glm::dot(ray->Direction, ray->Origin);
-	float c = glm::dot(ray->Origin, ray->Origin) - m_radius * m_radius;
+	float b = 2.0f * glm::dot(ray->Direction, (ray->Origin - m_transform.position));
+	float c = glm::dot(ray->Origin - m_transform.position, ray->Origin - m_transform.position) - m_radius * m_radius;
 
 	//solving quadriatic equation
-	float delta = b * b - 4 * a * c;
-	if (delta < 0)
+	float delta = b * b - 4.0f * a * c;
+	if (delta < 0.0f)
 	{
 		return false;
 	}
 
 	if (delta < std::numeric_limits<float>::epsilon())
 	{
-		float t = b / (2 * a);
+		float t = b / (2.0f * a);
 
 		vec3 point = ray->Origin + t * ray->Direction;
 		intersectionPoints.push_back(point);
@@ -42,8 +42,8 @@ bool Sphere::isIntersecting(const Ray* ray, std::vector<vec3>& intersectionPoint
 		return true;
 	}
 
-	float t1 = (b - std::sqrt(delta)) / (2 * a);
-	float t2 = (b + std::sqrt(delta)) / (2 * a);
+	float t1 = (b - std::sqrt(delta)) / (2.0f * a);
+	float t2 = (b + std::sqrt(delta)) / (2.0f * a);
 
 	vec3 point1 = ray->Origin + t1 * ray->Direction;
 	vec3 point2 = ray->Origin + t2 * ray->Direction;

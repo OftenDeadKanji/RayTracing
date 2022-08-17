@@ -3,7 +3,7 @@
 #include "Object/sphere.h"
 
 Scene::Scene(const std::string& sceneFilePath)
-	: m_backgroundColor(0.2f, 0.2f, 0.2f)
+	: m_backgroundColor(1.0f, 1.0f, 1.0f)
 {
 	std::ifstream sceneFile(sceneFilePath, std::ios::in);
 
@@ -18,7 +18,7 @@ Scene::Scene(const std::string& sceneFilePath)
 }
 
 Scene::Scene(std::ifstream& sceneFile)
-	: m_backgroundColor(0.2f, 0.2f, 0.2f)
+	: m_backgroundColor(1.0f, 1.0f, 1.0f)
 {
 	initScene(sceneFile);
 }
