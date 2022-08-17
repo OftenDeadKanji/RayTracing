@@ -108,6 +108,24 @@ void Scene::readSphere(std::ifstream& sceneFile)
 
 			sphere->setRadius(radius);
 		}
+		else if (name == "Color")
+		{
+			size_t leftBracketPos = value.find("(");
+			size_t rightBracketPos = value.find(")");
+
+			size_t firstCommaPos = value.find(",");
+			size_t secondCommaPos = value.find(",", firstCommaPos + 1);
+
+			std::string xStr = value.substr(leftBracketPos + 1, firstCommaPos - leftBracketPos - 1);
+			std::string yStr = value.substr(firstCommaPos + 1, secondCommaPos - firstCommaPos - 1);
+			std::string zStr = value.substr(secondCommaPos + 1, rightBracketPos - secondCommaPos - 1);
+
+			int r = std::stoi(xStr);
+			int g = std::stoi(yStr);
+			int b = std::stoi(zStr);
+
+			sphere->setColor(vec3(r / 255.0f, g / 255.0f, b / 255.0f));
+		}
 
 	} while (attribute != "EndSphere");
 

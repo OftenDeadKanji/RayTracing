@@ -18,6 +18,7 @@ public:
 	void setPosition(vec3 position);
 
 	vec3 getColor() const;
+	void setColor(vec3 color);
 protected:
 	Transform m_transform;
 	vec3 m_color;

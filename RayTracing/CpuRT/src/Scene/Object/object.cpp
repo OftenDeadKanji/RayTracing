@@ -24,3 +24,8 @@ vec3 Object::getColor() const
 {
 	return m_color;
 }
+
+void Object::setColor(vec3 color)
+{
+	m_color = color;
+}
