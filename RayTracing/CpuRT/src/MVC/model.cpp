@@ -6,7 +6,7 @@ MVC::Model::Model(vec2i textureResolution)
 {
 	m_screenTexture.resize(static_cast<size_t>(textureResolution.x * textureResolution.y * 3));
 
-	int threadsCount = std::thread::hardware_concurrency();
+	int threadsCount = std::thread::hardware_concurrency() - 1;
 
 	for (int i = 0; i < threadsCount; i++)
 	{
@@ -113,7 +113,24 @@ vec2i MVC::Model::getTextureResolution() const
 
 void MVC::Model::startThreadedGenerating()
 {
-	this->threadPool[0] = std::thread(&MVC::Model::generateImagePart, this, 0, 0, m_camera.Resolution.x - 1, 0, m_camera.Resolution.y - 1);
+	int threadsCount = threadPool.size();
+	
+	float division = 1.0f / threadsCount;
+	//int rangeX = std::ceil(m_camera.Resolution.x * division);
+	int rangeY = std::ceil(m_camera.Resolution.y * division);
+
+	for (int i = 0; i < threadsCount; ++i)
+	{
+		int startY = i * rangeY;
+		int endY = (i + 1) * rangeY - 1;
+
+		if (endY >= m_camera.Resolution.y)
+		{
+			endY = m_camera.Resolution.y - 1;
+		}
+
+		this->threadPool[i] = std::thread(&MVC::Model::generateImagePart, this, i, 0, m_camera.Resolution.x - 1, startY, endY);
+	}
 }
 
 Ray MVC::Model::generateRay(int x, int y)
@@ -142,9 +159,9 @@ Ray MVC::Model::generateRay(int x, int y)
 
 void MVC::Model::setTexturePixelColor(int x, int y, vec3 color)
 {
-	int flippedX = m_camera.Resolution.x - x - 1;
+	int flippedY = m_camera.Resolution.y - y - 1;
 
-	size_t coord = static_cast<size_t>(flippedX * m_camera.Resolution.y + y);
+	size_t coord = static_cast<size_t>(flippedY * m_camera.Resolution.x + x);
 
 	m_screenTexture[coord * 3] = color.r;
 	m_screenTexture[coord * 3 + 1] = color.g;
