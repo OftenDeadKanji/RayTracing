@@ -5,8 +5,8 @@ Ray::Ray()
 {
 }
 
-Ray::Ray(vec3 origin, vec3 direction, float maxT)
-	: m_origin(origin), m_direction(direction), m_maxT(maxT)
+Ray::Ray(vec3 origin, vec3 direction, Object* startingObject, float maxT)
+	: m_origin(origin), m_direction(direction), m_startingObject(startingObject), m_maxT(maxT)
 {
 }
 
@@ -48,4 +48,19 @@ float Ray::getMaxT()
 void Ray::setMaxT(float maxT)
 {
 	m_maxT = maxT;
+}
+
+Object* Ray::getStartingObject()
+{
+	return m_startingObject;
+}
+
+Object* const Ray::getStartingObject() const
+{
+	return m_startingObject;
+}
+
+void Ray::setStartingObject(Object* object)
+{
+	m_startingObject = object;
 }
