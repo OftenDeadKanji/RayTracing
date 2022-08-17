@@ -57,13 +57,25 @@ bool Sphere::isIntersecting(const Ray* ray, std::vector<IntersectionPoint>& inte
 
 	vec3 point1 = ray->Origin + t1 * ray->Direction;
 	vec3 normal1 = glm::normalize(point1 - m_transform.position);
+	FaceSide side1 = FaceSide::front;
+	
 	float dot1 = glm::dot(ray->Direction, normal1);
-	FaceSide side1 = dot1 < 0.0f ? FaceSide::front : FaceSide::back;
+	if (dot1 > 0.0f)
+	{
+		normal1 = -normal1;
+		side1 = FaceSide::back;
+	}
 
 	vec3 point2 = ray->Origin + t2 * ray->Direction;
 	vec3 normal2 = glm::normalize(point2 - m_transform.position);
+	FaceSide side2 = FaceSide::front;
+
 	float dot2 = glm::dot(ray->Direction, normal2);
-	FaceSide side2 = dot2 < 0.0f ? FaceSide::front : FaceSide::back;
+	if (dot2 > 0.0f)
+	{
+		normal2 = -normal2;
+		side2 = FaceSide::back;
+	}
 
 	intersectionPoints.emplace_back(point1, normal1, side1);
 	intersectionPoints.emplace_back(point2, normal2, side2);
