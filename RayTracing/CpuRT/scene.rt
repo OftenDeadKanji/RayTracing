@@ -4,3 +4,21 @@ Position=(0, 0, -5)
 Radius=0.5
 
 EndSphere
+StartSphere
+
+Position=(0, 0, -2)
+Radius=0.2
+
+EndSphere
+StartSphere
+
+Position=(-0.3, -0.5, -4)
+Radius=0.3
+
+EndSphere
+StartSphere
+
+Position=(0.5, 0.4, -5)
+Radius=0.1
+
+EndSphere

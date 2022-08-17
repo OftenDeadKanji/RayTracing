@@ -17,7 +17,7 @@ Sphere::Sphere(float radius, Transform transform)
 {
 }
 
-bool Sphere::isIntersecting(const Ray* ray, std::vector<vec3>& intersectionPoints) const
+bool Sphere::isIntersecting(const Ray* ray, std::vector<vec3>& intersectionPoints, std::vector<vec3>& intersectionPointsNormals) const
 {
 	//at2 + bt + c = 0
 
@@ -39,6 +39,9 @@ bool Sphere::isIntersecting(const Ray* ray, std::vector<vec3>& intersectionPoint
 		vec3 point = ray->Origin + t * ray->Direction;
 		intersectionPoints.push_back(point);
 	
+		vec3 normal = point - m_transform.position;
+		intersectionPointsNormals.push_back(normal);
+
 		return true;
 	}
 
@@ -48,8 +51,14 @@ bool Sphere::isIntersecting(const Ray* ray, std::vector<vec3>& intersectionPoint
 	vec3 point1 = ray->Origin + t1 * ray->Direction;
 	vec3 point2 = ray->Origin + t2 * ray->Direction;
 
+	vec3 normal1 = point1 - m_transform.position;
+	vec3 normal2 = point2 - m_transform.position;
+
 	intersectionPoints.push_back(point1);
 	intersectionPoints.push_back(point2);
+
+	intersectionPointsNormals.push_back(normal1);
+	intersectionPointsNormals.push_back(normal2);
 
 	return true;
 }

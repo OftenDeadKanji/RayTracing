@@ -1,4 +1,5 @@
 #include "model.h"
+#include "../Shading/shading.h"
 
 MVC::Model::Model(vec2i textureResolution)
 	: m_camera(textureResolution, glm::radians(45.0f)), m_scene(), iteratorX(0), iteratorY(0)
@@ -70,7 +71,25 @@ void MVC::Model::generateImagePart(int threadId, int fromX, int toX, int fromY, 
 
 			if (info.intersected)
 			{
-				vec3 color = { info.intersectedObject->getColor().r,info.intersectedObject->getColor().g, info.intersectedObject->getColor().b };
+				size_t closestPointIndex = 0;
+				for (auto n = 1; n < info.intersectionPoints.size(); ++n)
+				{
+					float closestDist = glm::distance(ray.Origin, info.intersectionPoints[closestPointIndex]);
+					float newDist = glm::distance(ray.Origin, info.intersectionPoints[n]);
+
+					if (closestDist > newDist)
+					{
+						closestPointIndex = n;
+					}
+				}
+				
+				vec3 objectColor = info.intersectedObject->getColor();
+				vec3 closestPoint = info.intersectionPoints[closestPointIndex];
+				vec3 closestPointNormal = glm::normalize(info.intersectionPointsNormals[closestPointIndex]);
+				vec3 lightDirection = glm::normalize(vec3(-0.5f, -0.5f, -0.5f));
+				vec3 viewDirection = glm::normalize(vec3(ray.Direction));
+
+				vec3 color = Shading::getColor_Phong(objectColor, closestPoint, closestPointNormal, lightDirection, viewDirection);
 				setTexturePixelColor(i, j, color);
 			}
 			else

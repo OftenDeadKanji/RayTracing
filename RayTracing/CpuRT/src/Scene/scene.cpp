@@ -33,9 +33,10 @@ IntersectionInfo Scene::intersect(const Ray& ray) const
 	for (auto& sceneObjectPtr : m_sceneObjects)
 	{
 		std::vector<vec3> points;
-		if (sceneObjectPtr->isIntersecting(&ray, points))
+		std::vector<vec3> normals;
+		if (sceneObjectPtr->isIntersecting(&ray, points, normals))
 		{
-			return IntersectionInfo(true, points, sceneObjectPtr.get());
+			return IntersectionInfo(true, points, sceneObjectPtr.get(), normals);
 		}
 	}
 
