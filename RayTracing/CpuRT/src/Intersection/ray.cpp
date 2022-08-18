@@ -40,7 +40,7 @@ void Ray::setDirection(vec3 direction)
 	m_direction = direction;
 }
 
-float Ray::getMaxT()
+float Ray::getMaxT() const
 {
 	return m_maxT;
 }

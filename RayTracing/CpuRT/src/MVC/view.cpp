@@ -62,7 +62,6 @@ namespace MVC
 		glBindTexture(GL_TEXTURE_2D, m_texture);
 		glUniform1i(glGetUniformLocation(m_shader, "renderedImage"), 0); // manually
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_FLOAT, texture.data());
-		glGenerateMipmap(GL_TEXTURE_2D);
 
 		glBindVertexArray(m_textureQuadVAO);
 
@@ -79,7 +78,7 @@ namespace MVC
 	void View::generateTexture(const std::vector<float>& texture, int width, int height)
 	{
 		glGenTextures(1, &m_texture);
-		
+		glBindTexture(GL_TEXTURE_2D, m_texture);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
@@ -87,9 +86,8 @@ namespace MVC
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_FLOAT, texture.data());
-		glGenerateMipmap(GL_TEXTURE_2D);
 
-		updateQuadTextureCoords(vec2(width, height));
+		//updateQuadTextureCoords(vec2(width, height));
 	}
 
 	void View::initRendering()
@@ -205,10 +203,13 @@ namespace MVC
 
 		if (isWindowWidthBigger)
 		{
-			float aspectRatio = static_cast<float>(windowSize.x) / windowSize.y;
+			float aspectRatio = windowSize.x / windowSize.y;
+			//vec2 cameraResolution = textureResolution;
 
-			float upperBoundary[] = { 1.0 - 0.5f * (1.0f - 1.0f / aspectRatio) };
-			float lowerBoundary[] = { 0.5f * (1.0f - 1.0f / aspectRatio) };
+			float x = (1.0f / aspectRatio);
+
+			float upperBoundary[] = { (1.0f - x) / 2.0f };
+			float lowerBoundary[] = { 1.0f - upperBoundary[0]};
 
 			glBindBuffer(GL_ARRAY_BUFFER, m_textureQuadVBO);
 			

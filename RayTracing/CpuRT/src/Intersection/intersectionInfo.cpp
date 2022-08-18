@@ -1,13 +1,13 @@
 #include "intersectionInfo.h"
 
-const IntersectionInfo IntersectionInfo::NoIntersection = IntersectionInfo(false, std::vector<IntersectionPoint>(), nullptr);
+const IntersectionInfo IntersectionInfo::NoIntersection = IntersectionInfo(false, IntersectionPoint(), vec3(0.0f), nullptr);
 
 IntersectionInfo::IntersectionInfo()
-	: IntersectionInfo(false, std::vector<IntersectionPoint>(), nullptr)
+	: IntersectionInfo(false, IntersectionPoint(), vec3(0.0f), nullptr)
 {
 }
 
-IntersectionInfo::IntersectionInfo(bool intersected, std::vector<IntersectionPoint> intersectionPoints, const Object* intersectedObject)
-	: intersected(intersected), intersectionPoints(std::move(intersectionPoints)), intersectedObject(intersectedObject)
+IntersectionInfo::IntersectionInfo(bool intersected, IntersectionPoint intersectionPoint, vec3 color, const Object* intersectedObject)
+	: intersected(intersected), intersectionPoint(std::move(intersectionPoint)), color(color), intersectedObject(intersectedObject)
 {
 }

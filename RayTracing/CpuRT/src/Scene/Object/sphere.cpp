@@ -19,7 +19,7 @@ Sphere::Sphere(float radius, Transform transform)
 {
 }
 
-bool Sphere::isIntersecting(const Ray* ray, std::vector<IntersectionPoint>& intersectionPoints) const
+bool Sphere::isIntersecting(const Ray* ray, IntersectionPoint& intersectionPoint) const
 {
 	using FaceSide = IntersectionPoint::FaceSide;
 
@@ -32,54 +32,32 @@ bool Sphere::isIntersecting(const Ray* ray, std::vector<IntersectionPoint>& inte
 
 	//solving quadriatic equation
 	float delta = glm::pow2(half_b) - a * c;
+	
 	if (delta < 0.0f)
 	{
 		return false;
 	}
 
-	if (delta < std::numeric_limits<float>::epsilon())
-	{
-		float t = -half_b / a;
-
-		vec3 point = ray->Origin + t * ray->Direction;
-		vec3 normal = point - m_transform.position;
-		
-		float dot = glm::dot(ray->Direction, normal);
-		FaceSide side = dot > 0.0f ? FaceSide::front : FaceSide::back;
-
-		intersectionPoints.emplace_back(point, normal, side);
-
-		return true;
-	}
 	float delta_sqroot = glm::sqrt(delta);
-	float t1 = (-half_b - delta_sqroot) / a;
-	float t2 = (-half_b + delta_sqroot) / a;
+	float t = (-half_b - delta_sqroot) / a;
 
-	vec3 point1 = ray->Origin + t1 * ray->Direction;
-	vec3 normal1 = glm::normalize(point1 - m_transform.position);
-	FaceSide side1 = FaceSide::front;
+	if (t > ray->MaxT || t < 0.00001f)
+	{
+		return false;
+	}
+
+	vec3 point = ray->Origin + t * ray->Direction;
+	vec3 normal = glm::normalize(point - m_transform.position);
+	FaceSide side = FaceSide::front;
 	
-	float dot1 = glm::dot(ray->Direction, normal1);
-	if (dot1 > 0.0f)
+	float dot = glm::dot(ray->Direction, normal);
+	if (dot > 0.0f)
 	{
-		normal1 = -normal1;
-		side1 = FaceSide::back;
+		normal = -normal;
+		side = FaceSide::back;
 	}
 
-	vec3 point2 = ray->Origin + t2 * ray->Direction;
-	vec3 normal2 = glm::normalize(point2 - m_transform.position);
-	FaceSide side2 = FaceSide::front;
-
-	float dot2 = glm::dot(ray->Direction, normal2);
-	if (dot2 > 0.0f)
-	{
-		normal2 = -normal2;
-		side2 = FaceSide::back;
-	}
-
-	intersectionPoints.emplace_back(point1, normal1, side1);
-	intersectionPoints.emplace_back(point2, normal2, side2);
-
+	intersectionPoint = IntersectionPoint(point, normal, side);
 	return true;
 }
 

@@ -185,5 +185,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="scene.rt" />
+    <None Include="scene2.rt" />
   </ItemGroup>
 </Project>

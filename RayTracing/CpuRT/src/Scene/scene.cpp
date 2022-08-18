@@ -4,6 +4,7 @@
 #include <limits>
 #include "../Intersection/ray.h"
 #include "glm/gtx/norm.hpp"
+#include "../Utilities/random.h"
 
 Scene::Scene(const std::string& sceneFilePath)
 	: m_backgroundColor(1.0f, 1.0f, 1.0f)
@@ -31,47 +32,62 @@ std::vector<std::unique_ptr<Object>>& Scene::getSceneObjects()
 	return m_sceneObjects;
 }
 
-IntersectionInfo Scene::intersect(const Ray& ray) const
+IntersectionInfo Scene::intersect(const Ray& ray, int depth) const
 {
+	if (depth <= 0)
+	{
+		return IntersectionInfo::NoIntersection;
+	}
+
 	const size_t noIntersection = -1;
-	
+
 	size_t closestObjectIndex = noIntersection;
-	std::vector<IntersectionPoint> intersectionPoints;
-	
+	IntersectionPoint intersectionPoint;
+
 	float closestPointDistance2 = std::numeric_limits<float>::max();
 
 	for (size_t i = 0; i < m_sceneObjects.size(); ++i)
 	{
-		std::vector<IntersectionPoint> points;
-		if (m_sceneObjects[i]->isIntersecting(&ray, points))
+		if (m_sceneObjects[i].get() == ray.StartingObject)
 		{
-			float minDistance2 = closestPointDistance2;
-			for (int p = 0; p < points.size(); ++p)
-			{
-				float distance2 = glm::distance2(ray.Origin, points[p].position);
+			continue;
 
-				if (distance2 < minDistance2)
-				{
-					minDistance2 = distance2;
-				}
-			}
+		}
+		IntersectionPoint point;
+		if (m_sceneObjects[i]->isIntersecting(&ray, point))
+		{
+			float distance2 = glm::distance2(ray.Origin, point.position);
 
-			if (minDistance2 < closestPointDistance2)
+
+			if (distance2 < closestPointDistance2)
 			{
-				closestPointDistance2 = minDistance2;
+				closestPointDistance2 = distance2;
 				closestObjectIndex = i;
-				intersectionPoints = points;
+				intersectionPoint = point;
 			}
 
 		}
 	}
+
 	if (closestObjectIndex != noIntersection)
 	{
-		return IntersectionInfo(true, intersectionPoints, m_sceneObjects[closestObjectIndex].get());
+		Object* intersectedObject = m_sceneObjects[closestObjectIndex].get();
+		auto info =  IntersectionInfo(true, intersectionPoint, intersectedObject->getColor(), intersectedObject);
 
+		auto random = Random::getInstancePtr();
+
+		vec3 direction = intersectionPoint.position + intersectionPoint.normal + glm::normalize(random->vector3());
+		Ray newRay = Ray(intersectionPoint.position, glm::normalize(direction - intersectionPoint.position), intersectedObject);
+		
+		IntersectionInfo info2 = intersect(newRay, depth - 1);
+		info.color = 0.5f * info2.color;
+
+		return info;
 	}
 
-	return IntersectionInfo::NoIntersection;
+	auto no = IntersectionInfo::NoIntersection;
+	no.color = m_backgroundColor;
+	return no;
 }
 
 vec3 Scene::getBackgroundColor() const
@@ -133,7 +149,7 @@ void Scene::readSphere(std::ifstream& sceneFile)
 
 			sphere->setPosition(vec3(x, y, z));
 		}
-		else if (name == "Radius") 
+		else if (name == "Radius")
 		{
 			float radius = std::stof(value);
 

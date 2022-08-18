@@ -16,7 +16,7 @@ public:
 
 	__declspec(property(get=getSceneObjects)) std::vector<std::unique_ptr<Object>> SceneObjects;
 
-	IntersectionInfo intersect(const Ray& ray) const;
+	IntersectionInfo intersect(const Ray& ray, int depth = 1) const;
 
 	vec3 getBackgroundColor() const;
 private:

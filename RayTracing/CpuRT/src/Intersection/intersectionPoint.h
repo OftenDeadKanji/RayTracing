@@ -13,6 +13,7 @@ public:
 	};
 
 public:
+	IntersectionPoint();
 	IntersectionPoint(const vec3& position, const vec3& normal, FaceSide side);
 
 	bool isOnTheFrontSide() const;

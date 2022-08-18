@@ -20,7 +20,7 @@ public:
 	void setDirection(vec3 direction);
 	__declspec(property(get = getDirection, put = setDirection)) vec3 Direction;
 
-	float getMaxT();
+	float getMaxT() const;
 	void setMaxT(float maxT);
 	__declspec(property(get = getMaxT, put = setMaxT)) float MaxT;
 

@@ -3,10 +3,10 @@
 namespace MVC
 {
 	Controller::Controller()
-		: m_view(*this, WindowProperties(1600, 900, "CPU RayTracing")), m_model(vec2( 1024, 1024 ))
+		: m_view(*this, WindowProperties(1600, 900, "CPU RayTracing")), m_model(vec2( 1600, 900 ))
 	{
 		initView();
-		m_model.startThreadedGenerating();
+		m_model.startThreadedGenerating(vec2(1600, 900));
 	}
 
 	void Controller::initView()

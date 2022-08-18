@@ -2,9 +2,11 @@
 #include "../Scene/scene.h"
 #include "../Scene/camera.h"
 #include "stb_image/stb_image.h"
-#include <array>
+#include <queue>
+#include <utility>
 #include "../Intersection/ray.h"
 #include <thread>
+#include <mutex>
 
 namespace MVC
 {
@@ -16,6 +18,7 @@ namespace MVC
 		void update();
 
 		void generateImageOneIteration();
+		void thread_task(int threadId);
 		void generateImagePart(int threadId, int fromX, int toX, int fromY, int toY);
 
 		const std::vector<float>& getScreenTexture() const;
@@ -23,7 +26,7 @@ namespace MVC
 
 		vec2i getTextureResolution() const;
 
-		void startThreadedGenerating();
+		void startThreadedGenerating(vec2 viewportSize);
 	private:
 		void setTexturePixelColor(int x, int y, vec3 color);
 
@@ -34,8 +37,12 @@ namespace MVC
 		int iteratorX, iteratorY;
 
 		int sampelsPerPixel;
+		int maxDepth;
 
+		std::queue<std::pair<vec2i, vec2i>> tasks;
+		std::mutex taskMutex;
 		std::vector<std::thread> threadPool;
+		std::vector<bool> threadFinished;
 		std::vector<bool> threadTaskTermination;
 	};
 }

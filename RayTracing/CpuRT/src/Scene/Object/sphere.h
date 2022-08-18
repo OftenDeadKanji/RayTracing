@@ -9,7 +9,7 @@ public:
 	Sphere(float radius, vec3 position);
 	Sphere(float radius, Transform transform);
 
-	bool isIntersecting(const Ray* ray, std::vector<IntersectionPoint>& intersectionPoints) const override;
+	bool isIntersecting(const Ray* ray, IntersectionPoint& intersectionPoint) const override;
 
 	void setRadius(float radius);
 private:
