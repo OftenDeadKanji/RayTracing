@@ -59,7 +59,7 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 
 
 Window::Window(WindowProperties properties)
-	: properties(std::move(properties))
+	: m_properties(std::move(properties))
 {
 	glfwInit();
 
@@ -67,14 +67,14 @@ Window::Window(WindowProperties properties)
 	this->initializeOpenGL();
 	this->initImGUI();
 
-	glfwSetInputMode(this->glfwWindow, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-	glfwSetCursorPos(this->glfwWindow, this->properties.width / 2.0, this->properties.height / 2.0);
+	glfwSetInputMode(this->m_glfwWindowPtr, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+	glfwSetCursorPos(this->m_glfwWindowPtr, this->m_properties.width / 2.0, this->m_properties.height / 2.0);
 }
 
 Window::Window(Window&& other) noexcept
-	: properties(std::move(other.properties)), glfwWindow(other.glfwWindow)
+	: m_properties(std::move(other.m_properties)), m_glfwWindowPtr(other.m_glfwWindowPtr)
 {
-	other.glfwWindow = nullptr;
+	other.m_glfwWindowPtr = nullptr;
 }
 
 Window::~Window()
@@ -83,9 +83,9 @@ Window::~Window()
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 
-	if (this->glfwWindow)
+	if (this->m_glfwWindowPtr)
 	{
-		glfwDestroyWindow(this->glfwWindow);
+		glfwDestroyWindow(this->m_glfwWindowPtr);
 	}
 
 	glfwTerminate();
@@ -95,9 +95,9 @@ Window& Window::operator=(Window&& other) noexcept
 {
 	if (this != &other)
 	{
-		this->properties = other.properties;
-		this->glfwWindow = other.glfwWindow;
-		other.glfwWindow = nullptr;
+		this->m_properties = other.m_properties;
+		this->m_glfwWindowPtr = other.m_glfwWindowPtr;
+		other.m_glfwWindowPtr = nullptr;
 	}
 
 	return *this;
@@ -105,25 +105,25 @@ Window& Window::operator=(Window&& other) noexcept
 
 void Window::setSize(const Size& size)
 {
-	this->properties.width = size.x;
-	this->properties.height = size.y;
+	this->m_properties.width = size.x;
+	this->m_properties.height = size.y;
 
-	glfwSetWindowSize(this->glfwWindow, this->properties.width, this->properties.height);
+	glfwSetWindowSize(this->m_glfwWindowPtr, this->m_properties.width, this->m_properties.height);
 }
 
 Size Window::getSize()
 {
-	return { this->properties.width, this->properties.height };
+	return { this->m_properties.width, this->m_properties.height };
 }
 
 void Window::setTitle(const std::string& title)
 {
-	this->properties.title = title;
-	glfwSetWindowTitle(this->glfwWindow, this->properties.title.c_str());
+	this->m_properties.title = title;
+	glfwSetWindowTitle(this->m_glfwWindowPtr, this->m_properties.title.c_str());
 }
 const std::string& Window::getTitle()
 {
-	return this->properties.title;
+	return this->m_properties.title;
 }
 
 void Window::setIcon(const std::string& iconFilePath)
@@ -164,55 +164,55 @@ void Window::swapBuffers()
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-	glfwSwapBuffers(this->glfwWindow);
+	glfwSwapBuffers(this->m_glfwWindowPtr);
 }
 
 void Window::attachEventManager(EventManager& manager)
 {
-	this->eventManager = &manager;
+	this->m_eventManagerPtr = &manager;
 
-	glfwSetWindowCloseCallback(glfwWindow, window_close_callback);
-	glfwSetFramebufferSizeCallback(glfwWindow, framebuffer_size_callback);
-	glfwSetKeyCallback(glfwWindow, key_callback);
-	glfwSetMouseButtonCallback(glfwWindow, mouse_button_callback);
-	glfwSetCursorPosCallback(glfwWindow, cursor_position_callback);
+	glfwSetWindowCloseCallback(m_glfwWindowPtr, window_close_callback);
+	glfwSetFramebufferSizeCallback(m_glfwWindowPtr, framebuffer_size_callback);
+	glfwSetKeyCallback(m_glfwWindowPtr, key_callback);
+	glfwSetMouseButtonCallback(m_glfwWindowPtr, mouse_button_callback);
+	glfwSetCursorPosCallback(m_glfwWindowPtr, cursor_position_callback);
 
-	glfwSetWindowUserPointer(this->glfwWindow, this);
+	glfwSetWindowUserPointer(this->m_glfwWindowPtr, this);
 }
 
 void Window::windowCloseCallback(bool shouldWindowClose) const
 {
-	this->eventManager->windowCloseCallback(shouldWindowClose);
+	this->m_eventManagerPtr->windowCloseCallback(shouldWindowClose);
 }
 
 void Window::windowResizeCallback(vec2 size) const
 {
-	this->eventManager->windowResizeCallback(size);
+	this->m_eventManagerPtr->windowResizeCallback(size);
 }
 
 void Window::keyboardKeyCallback(KeyboardKey key, KeyboardKeyAction action) const
 {
-	this->eventManager->keyboardKeyCallback(key, action);
+	this->m_eventManagerPtr->keyboardKeyCallback(key, action);
 }
 
 void Window::mouseButtonCallback(MouseButton button, MouseButtonAction action) const
 {
-	this->eventManager->mouseButtonCallback(button, action);
+	this->m_eventManagerPtr->mouseButtonCallback(button, action);
 }
 
 void Window::cursorPositionCallback(vec2 position) const
 {
-	this->eventManager->cursorPositionCallback(position);
+	this->m_eventManagerPtr->cursorPositionCallback(position);
 }
 
 void Window::resetCursorPos()
 {
-	glfwSetCursorPos(this->glfwWindow, this->properties.width / 2.0, this->properties.height / 2.0);
+	glfwSetCursorPos(this->m_glfwWindowPtr, this->m_properties.width / 2.0, this->m_properties.height / 2.0);
 }
 
 GLFWwindow* Window::getGLFWWindow() const
 {
-	return this->glfwWindow;
+	return this->m_glfwWindowPtr;
 }
 
 void Window::createGLFWWindow()
@@ -222,16 +222,16 @@ void Window::createGLFWWindow()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_SAMPLES, 4);
 
-	this->glfwWindow = glfwCreateWindow(
-		this->properties.width,
-		this->properties.height,
-		this->properties.title.c_str(),
+	this->m_glfwWindowPtr = glfwCreateWindow(
+		this->m_properties.width,
+		this->m_properties.height,
+		this->m_properties.title.c_str(),
 		nullptr,
 		nullptr
 	);
 
-	glfwSetWindowAttrib(this->glfwWindow, GLFW_RESIZABLE, GLFW_FALSE);
-	glfwMakeContextCurrent(this->glfwWindow);
+	glfwSetWindowAttrib(this->m_glfwWindowPtr, GLFW_RESIZABLE, GLFW_FALSE);
+	glfwMakeContextCurrent(this->m_glfwWindowPtr);
 }
 
 void Window::centerWindow() const
@@ -241,9 +241,9 @@ void Window::centerWindow() const
 		if (const auto mode = glfwGetVideoMode(monitor))
 		{
 			int windowWidth, windowHeight;
-			glfwGetWindowSize(this->glfwWindow, &windowWidth, &windowHeight);
+			glfwGetWindowSize(this->m_glfwWindowPtr, &windowWidth, &windowHeight);
 
-			glfwSetWindowPos(this->glfwWindow, (mode->width - windowWidth) / 2, (mode->height - windowHeight) / 2);
+			glfwSetWindowPos(this->m_glfwWindowPtr, (mode->width - windowWidth) / 2, (mode->height - windowHeight) / 2);
 		}
 	}
 }
@@ -278,6 +278,6 @@ void Window::initImGUI()
 	auto& io = ImGui::GetIO(); (void)io;
 
 	ImGui::StyleColorsDark();
-	ImGui_ImplGlfw_InitForOpenGL(this->glfwWindow, false);
+	ImGui_ImplGlfw_InitForOpenGL(this->m_glfwWindowPtr, false);
 	ImGui_ImplOpenGL3_Init("#version 430");
 }

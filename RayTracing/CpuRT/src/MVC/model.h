@@ -17,7 +17,6 @@ namespace MVC
 		~Model();
 		void update();
 
-		void generateImageOneIteration();
 		void thread_task(int threadId);
 		void generateImagePart(int threadId, int fromX, int toX, int fromY, int toY);
 
@@ -34,15 +33,12 @@ namespace MVC
 		Camera m_camera;
 		std::vector<float> m_screenTexture;
 
-		int iteratorX, iteratorY;
+		int m_sampelsPerPixel;
+		int m_maxDepth;
 
-		int sampelsPerPixel;
-		int maxDepth;
-
-		std::queue<std::pair<vec2i, vec2i>> tasks;
-		std::mutex taskMutex;
-		std::vector<std::thread> threadPool;
-		std::vector<bool> threadFinished;
-		std::vector<bool> threadTaskTermination;
+		std::queue<std::pair<vec2i, vec2i>> m_tasks;
+		std::mutex m_taskMutex;
+		std::vector<std::thread> m_threadPool;
+		std::vector<bool> m_threadTaskTermination;
 	};
 }

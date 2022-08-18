@@ -47,8 +47,8 @@ private:
 	void initializeOpenGL();
 	void initImGUI();
 
-	WindowProperties properties;
-	GLFWwindow* glfwWindow{};
-	EventManager* eventManager{};
+	WindowProperties m_properties;
+	GLFWwindow* m_glfwWindowPtr{};
+	EventManager* m_eventManagerPtr{};
 };
 

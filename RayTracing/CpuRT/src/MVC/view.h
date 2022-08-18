@@ -23,9 +23,9 @@ namespace MVC
 		void initRendering();
 		void updateQuadTextureCoords(vec2 textureResolution);
 
-		Controller* controller;
-		Window window;
-		EventManager eventManager;
+		Controller* m_controllerPtr;
+		Window m_window;
+		EventManager m_eventManager;
 
 #pragma region Callbacks
 		std::function<void(void)> m_windowCloseCallback;

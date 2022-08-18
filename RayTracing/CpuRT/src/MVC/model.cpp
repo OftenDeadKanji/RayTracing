@@ -3,7 +3,7 @@
 #include "../Utilities/random.h"
 
 MVC::Model::Model(vec2i textureResolution)
-	: m_camera(textureResolution, glm::radians(45.0f)), m_scene(), sampelsPerPixel(100), maxDepth(50), iteratorX(0), iteratorY(0)
+	: m_camera(textureResolution, glm::radians(45.0f)), m_scene(), m_sampelsPerPixel(100), m_maxDepth(50)
 {
 	m_screenTexture.resize(static_cast<size_t>(textureResolution.x * textureResolution.y * 3));
 	const vec2i taskSize = vec2i(128, 128);
@@ -21,7 +21,7 @@ MVC::Model::Model(vec2i textureResolution)
 			lowerRight.x = std::min(lowerRight.x, textureResolution.x - 1);
 			lowerRight.y = std::min(lowerRight.y, textureResolution.y - 1);
 
-			tasks.push(std::make_pair(upperLeft, lowerRight));
+			m_tasks.push(std::make_pair(upperLeft, lowerRight));
 		}
 	}
 	//int threadsCount = 1;
@@ -31,76 +31,45 @@ MVC::Model::Model(vec2i textureResolution)
 
 	for (int i = 0; i < threadsCount; i++)
 	{
-		threadPool.push_back(std::thread());
-		threadTaskTermination.push_back(false);
+		m_threadPool.push_back(std::thread());
+		m_threadTaskTermination.push_back(false);
 	}
 }
 
 MVC::Model::~Model()
 {
-	for (int i = 0; i < threadPool.size(); ++i)
+	for (int i = 0; i < m_threadPool.size(); ++i)
 	{
-		threadTaskTermination[i] = true;
+		m_threadTaskTermination[i] = true;
 	}
 
-	for (int i = 0; i < threadPool.size(); ++i)
+	for (int i = 0; i < m_threadPool.size(); ++i)
 	{
-		if (threadPool[i].joinable())
+		if (m_threadPool[i].joinable())
 		{
-			threadPool[i].join();
+			m_threadPool[i].join();
 		}
 	}
 }
 
 void MVC::Model::update()
 {
-	//generateImageOneIteration();
-}
-[[depricated("DON'T")]]
-void MVC::Model::generateImageOneIteration()
-{
-	if (iteratorX < m_camera.Resolution.x)
-	{
-		if (iteratorY < m_camera.Resolution.y)
-		{
-			Ray ray = m_camera.generateRay(iteratorX, iteratorY);
-			IntersectionInfo info = m_scene.intersect(ray);
-
-			vec3 color(0.0f);
-			if (info.intersected)
-			{
-				color = { info.intersectedObject->getColor().r,info.intersectedObject->getColor().g, info.intersectedObject->getColor().b };
-			}
-			else
-			{
-				color = { m_scene.getBackgroundColor().r,m_scene.getBackgroundColor().g,m_scene.getBackgroundColor().b };
-			}
-			setTexturePixelColor(iteratorX, iteratorY, color);
-
-			iteratorY++;
-		}
-		else
-		{
-			iteratorY = 0;
-			iteratorX++;
-		}
-	}
 }
 
 void MVC::Model::thread_task(int threadId)
 {
 	while (true)
 	{
-		taskMutex.lock();
-		if (tasks.empty())
+		m_taskMutex.lock();
+		if (m_tasks.empty())
 		{
-			taskMutex.unlock();
+			m_taskMutex.unlock();
 			return;
 		}
 
-		auto task = tasks.front();
-		tasks.pop();
-		taskMutex.unlock();
+		auto task = m_tasks.front();
+		m_tasks.pop();
+		m_taskMutex.unlock();
 
 		generateImagePart(threadId, task.first.x, task.second.x, task.first.y, task.second.y);
 	}
@@ -115,9 +84,9 @@ void MVC::Model::generateImagePart(int threadId, int fromX, int toX, int fromY, 
 		for (int j = fromY; j <= toY; ++j)
 		{
 			vec3 color(0.0f);
-			for (int s = 0; s < sampelsPerPixel; ++s)
+			for (int s = 0; s < m_sampelsPerPixel; ++s)
 			{
-				if (threadTaskTermination[threadId])
+				if (m_threadTaskTermination[threadId])
 				{
 					return;
 				}
@@ -128,7 +97,7 @@ void MVC::Model::generateImagePart(int threadId, int fromX, int toX, int fromY, 
 				float v = j + random->value();
 
 				Ray ray = m_camera.generateRay(u, v);
-				IntersectionInfo info = m_scene.intersect(ray, maxDepth);
+				IntersectionInfo info = m_scene.intersect(ray, m_maxDepth);
 
 				if (info.intersected)
 				{
@@ -147,7 +116,7 @@ void MVC::Model::generateImagePart(int threadId, int fromX, int toX, int fromY, 
 				color += colorToAdd;
 			}
 
-			color /= sampelsPerPixel;
+			color /= m_sampelsPerPixel;
 			setTexturePixelColor(i, j, color);
 		}
 	}
@@ -165,30 +134,11 @@ vec2i MVC::Model::getTextureResolution() const
 
 void MVC::Model::startThreadedGenerating(vec2 viewportSize)
 {
-	//float aspectRatio = viewportSize.x / viewportSize.y;
-	//vec2 cameraResolution = m_camera.Resolution;
-
-	//float x = (cameraResolution.x / aspectRatio);
-
-	//int upper = (cameraResolution.y - x) / 2.0f;
-	//int lower = cameraResolution.y - upper;
-
-	auto threadsCount = threadPool.size();
-	//float division = 1.0f / threadsCount;
-
-	//int rangeY = std::ceil( cameraResolution.y * division);
+	auto threadsCount = m_threadPool.size();
 
 	for (int i = 0; i < threadsCount; ++i)
 	{
-	//	int startY = i * rangeY;
-	//	int endY = (i + 1) * rangeY - 1;
-
-	//	if (endY >= cameraResolution.y)
-	//	{
-	//		endY = cameraResolution.y - 1;
-	//	}
-
-		this->threadPool[i] = std::thread(&MVC::Model::thread_task, this, i);
+		this->m_threadPool[i] = std::thread(&MVC::Model::thread_task, this, i);
 	}
 }
 

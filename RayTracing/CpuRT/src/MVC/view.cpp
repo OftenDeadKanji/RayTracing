@@ -5,9 +5,9 @@
 namespace MVC
 {
 	View::View(Controller& controller, const WindowProperties& windowProperties)
-		: controller(&controller), window(windowProperties)
+		: m_controllerPtr(&controller), m_window(windowProperties)
 	{
-		window.attachEventManager(eventManager);
+		m_window.attachEventManager(m_eventManager);
 
 		initRendering();
 	}
@@ -22,11 +22,11 @@ namespace MVC
 
 	void View::checkInput()
 	{
-		eventManager.checkForEvents();
+		m_eventManager.checkForEvents();
 
-		while(!eventManager.isEventQueueEmpty())
+		while(!m_eventManager.isEventQueueEmpty())
 		{
-			switch (eventManager.getEventTypeFromQueue())
+			switch (m_eventManager.getEventTypeFromQueue())
 			{
 			default:
 				break;
@@ -54,7 +54,7 @@ namespace MVC
 
 	void View::render(float deltaTime, const std::vector<float>& texture, int width, int height)
 	{
-		window.fillWithColorRGB({ 0, 100, 0 });
+		m_window.fillWithColorRGB({ 0, 100, 0 });
 
 		glUseProgram(m_shader);
 
@@ -67,7 +67,7 @@ namespace MVC
 
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 
-		window.swapBuffers();
+		m_window.swapBuffers();
 	}
 
 	void View::setWindowCloseCallback(std::function<void()> callback)
@@ -198,7 +198,7 @@ namespace MVC
 
 	void View::updateQuadTextureCoords(vec2 textureResolution)
 	{
-		vec2 windowSize = window.getSize();
+		vec2 windowSize = m_window.getSize();
 		bool isWindowWidthBigger = windowSize.x >= windowSize.y;
 
 		if (isWindowWidthBigger)

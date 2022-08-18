@@ -51,13 +51,11 @@ IntersectionInfo Scene::intersect(const Ray& ray, int depth) const
 		if (m_sceneObjects[i].get() == ray.StartingObject)
 		{
 			continue;
-
 		}
 		IntersectionPoint point;
 		if (m_sceneObjects[i]->isIntersecting(&ray, point))
 		{
 			float distance2 = glm::distance2(ray.Origin, point.position);
-
 
 			if (distance2 < closestPointDistance2)
 			{
