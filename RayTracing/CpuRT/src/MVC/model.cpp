@@ -3,7 +3,7 @@
 #include "../Utilities/random.h"
 
 MVC::Model::Model(vec2i textureResolution)
-	: m_camera(textureResolution, glm::radians(45.0f)), m_scene(), sampelsPerPixel(4), iteratorX(0), iteratorY(0)
+	: m_camera(textureResolution, glm::radians(45.0f)), m_scene(), sampelsPerPixel(10), iteratorX(0), iteratorY(0)
 {
 	m_screenTexture.resize(static_cast<size_t>(textureResolution.x * textureResolution.y * 3));
 
@@ -36,26 +36,26 @@ void MVC::Model::update()
 {
 	//generateImageOneIteration();
 }
-[[depricated]]
+[[depricated("DON'T")]]
 void MVC::Model::generateImageOneIteration()
 {
 	if (iteratorX < m_camera.Resolution.x)
 	{
 		if (iteratorY < m_camera.Resolution.y)
 		{
-			Ray ray = generateRay(iteratorX, iteratorY);
+			Ray ray = m_camera.generateRay(iteratorX, iteratorY);
 			IntersectionInfo info = m_scene.intersect(ray);
 
+			vec3 color(0.0f);
 			if (info.intersected)
 			{
-				vec3 color = { info.intersectedObject->getColor().r,info.intersectedObject->getColor().g, info.intersectedObject->getColor().b };
-				setTexturePixelColor(iteratorX, iteratorY, color);
+				color = { info.intersectedObject->getColor().r,info.intersectedObject->getColor().g, info.intersectedObject->getColor().b };
 			}
 			else
 			{
-				vec3 color = { m_scene.getBackgroundColor().r,m_scene.getBackgroundColor().g,m_scene.getBackgroundColor().b };
-				setTexturePixelColor(iteratorX, iteratorY, color);
+				color = { m_scene.getBackgroundColor().r,m_scene.getBackgroundColor().g,m_scene.getBackgroundColor().b };
 			}
+			setTexturePixelColor(iteratorX, iteratorY, color);
 
 			iteratorY++;
 		}
@@ -70,6 +70,7 @@ void MVC::Model::generateImageOneIteration()
 void MVC::Model::generateImagePart(int threadId, int fromX, int toX, int fromY, int toY)
 {
 	Random* random = Random::getInstancePtr();
+
 	for (int i = fromX; i <= toX; ++i)
 	{
 		for (int j = fromY; j <= toY; ++j)
@@ -87,28 +88,29 @@ void MVC::Model::generateImagePart(int threadId, int fromX, int toX, int fromY, 
 				float u = i + random->value();
 				float v = j + random->value();
 				
-				Ray ray = generateRay(u, v);
+				Ray ray = m_camera.generateRay(u, v);
 				IntersectionInfo info = m_scene.intersect(ray);
 
 				if (info.intersected)
 				{
 					size_t closestPointIndex = 0;
-					for (auto n = 1; n < info.intersectionPoints.size(); ++n)
+					for (auto n = 0; n < info.intersectionPoints.size(); ++n)
 					{
-						if (info.intersectionPoints[closestPointIndex].side == IntersectionPoint::FaceSide::front)
+						if (info.intersectionPoints[n].side == IntersectionPoint::FaceSide::front)
 						{
 							//found first front-sided point
+							closestPointIndex = n;
 
-							for (auto m = n + 1; n < info.intersectionPoints.size(); ++n)
+							for (auto m = n + 1; m < info.intersectionPoints.size(); ++m)
 							{
-								if (info.intersectionPoints[closestPointIndex].side == IntersectionPoint::FaceSide::front)
+								if (info.intersectionPoints[m].side == IntersectionPoint::FaceSide::front)
 								{
 									float closestDist = glm::distance(ray.Origin, info.intersectionPoints[closestPointIndex].position);
-									float newDist = glm::distance(ray.Origin, info.intersectionPoints[n].position);
+									float newDist = glm::distance(ray.Origin, info.intersectionPoints[m].position);
 
 									if (closestDist > newDist)
 									{
-										closestPointIndex = n;
+										closestPointIndex = m;
 									}
 								}
 							}
@@ -167,29 +169,7 @@ void MVC::Model::startThreadedGenerating()
 	}
 }
 
-Ray MVC::Model::generateRay(float x, float y)
-{
-	int width = m_camera.Resolution.x;
-	int height = m_camera.Resolution.y;
-	float aspectRatio = static_cast<float>(width) / height;
 
-	auto viewportHeight = 1.0f;
-	auto viewportWidth = aspectRatio * viewportHeight;
-	auto focalLength = 1.0f;
-
-	vec3 rayOrigin = vec3(0.0f);
-	vec3 horizontal = vec3(viewportWidth, 0.0f, 0.0f);
-	vec3 vertical = vec3(0.0f, viewportHeight, 0.0f);
-
-	auto lowerLeftCorner = rayOrigin - horizontal / 2.0f - vertical / 2.0f - vec3(0.0f, 0.0f, focalLength);
-
-	auto u = static_cast<float>(x) / (width - 1);
-	auto v = 1.0f - static_cast<float>(y) / (height - 1);
-
-	vec3 rayDirection = glm::normalize(vec3(lowerLeftCorner + u * horizontal + v * vertical - rayOrigin));
-
-	return Ray(rayOrigin, rayDirection);
-}
 
 void MVC::Model::setTexturePixelColor(int x, int y, vec3 color)
 {

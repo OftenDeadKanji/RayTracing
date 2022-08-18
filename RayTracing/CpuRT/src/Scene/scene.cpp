@@ -1,6 +1,9 @@
 #include "scene.h"
 #include <iostream>
 #include "Object/sphere.h"
+#include <limits>
+#include "../Intersection/ray.h"
+#include "glm/gtx/norm.hpp"
 
 Scene::Scene(const std::string& sceneFilePath)
 	: m_backgroundColor(1.0f, 1.0f, 1.0f)
@@ -30,13 +33,42 @@ std::vector<std::unique_ptr<Object>>& Scene::getSceneObjects()
 
 IntersectionInfo Scene::intersect(const Ray& ray) const
 {
-	for (auto& sceneObjectPtr : m_sceneObjects)
+	const size_t noIntersection = -1;
+	
+	size_t closestObjectIndex = noIntersection;
+	std::vector<IntersectionPoint> intersectionPoints;
+	
+	float closestPointDistance2 = std::numeric_limits<float>::max();
+
+	for (size_t i = 0; i < m_sceneObjects.size(); ++i)
 	{
 		std::vector<IntersectionPoint> points;
-		if (sceneObjectPtr->isIntersecting(&ray, points))
+		if (m_sceneObjects[i]->isIntersecting(&ray, points))
 		{
-			return IntersectionInfo(true, points, sceneObjectPtr.get());
+			float minDistance2 = closestPointDistance2;
+			for (int p = 0; p < points.size(); ++p)
+			{
+				float distance2 = glm::distance2(ray.Origin, points[p].position);
+
+				if (distance2 < minDistance2)
+				{
+					minDistance2 = distance2;
+				}
+			}
+
+			if (minDistance2 < closestPointDistance2)
+			{
+				closestPointDistance2 = minDistance2;
+				closestObjectIndex = i;
+				intersectionPoints = points;
+			}
+
 		}
+	}
+	if (closestObjectIndex != noIntersection)
+	{
+		return IntersectionInfo(true, intersectionPoints, m_sceneObjects[closestObjectIndex].get());
+
 	}
 
 	return IntersectionInfo::NoIntersection;

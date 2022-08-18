@@ -25,7 +25,6 @@ namespace MVC
 
 		void startThreadedGenerating();
 	private:
-		Ray generateRay(float x, float y);
 		void setTexturePixelColor(int x, int y, vec3 color);
 
 		Scene m_scene;
