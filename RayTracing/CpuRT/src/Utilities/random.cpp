@@ -1,10 +1,10 @@
 #include "random.h"
 #include <numbers>
 
-std::unique_ptr<Random> Random::s_instance(new Random());
+std::unique_ptr<Random> Random::s_instance(new Random{});
 
 Random::Random()
-    : m_distribution(0.0f, 1.0f)
+    : m_distribution{ 0.0f, 1.0f }
 {
 }
 
@@ -25,7 +25,7 @@ vec2 Random::vector2()
     float x = std::cosf(phi);
     float y = std::sinf(phi);
 
-    return vec2(x, y);
+    return vec2{ x, y };
 }
 
 vec3 Random::vector3()
@@ -37,5 +37,5 @@ vec3 Random::vector3()
     float y = std::sinf(phi) * std::sinf(theta);
     float z = std::cosf(phi);
 
-    return vec3(x, y, z);
+    return vec3{ x, y, z };
 }

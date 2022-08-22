@@ -15,8 +15,9 @@ public:
 	Window& operator=(const Window&) = delete;
 	Window& operator=(Window&&) noexcept;
 
-	void setSize(const Size& size);
-	Size getSize();
+	void setSize(const vec2i& size);
+	const vec2i& getSize() const;
+	vec2i& getSize();
 
 	void setTitle(const std::string& title);
 	const std::string& getTitle();

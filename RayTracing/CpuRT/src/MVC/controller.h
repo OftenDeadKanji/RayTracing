@@ -10,10 +10,8 @@ namespace MVC
 		Controller();
 
 		void initView();
-#pragma region Properties
-		bool __declspec(property(get = getMainLoopCondition)) MainLoopCondition;
+		
 		bool getMainLoopCondition() const;
-#pragma endregion
 
 		void processInput(float deltaTime);
 		void update(float deltaTime);

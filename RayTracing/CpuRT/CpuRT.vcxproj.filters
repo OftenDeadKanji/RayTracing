@@ -93,9 +93,6 @@
     <ClCompile Include="src\Intersection\intersectionInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Shading\shading.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Intersection\intersectionPoint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -168,9 +165,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Intersection\intersectionInfo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Shading\shading.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Intersection\intersectionPoint.h">

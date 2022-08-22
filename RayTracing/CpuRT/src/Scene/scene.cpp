@@ -5,9 +5,11 @@
 #include "../Intersection/ray.h"
 #include "glm/gtx/norm.hpp"
 #include "../Utilities/random.h"
+#include <optional>
+#include <map>
 
 Scene::Scene(const std::string& sceneFilePath)
-	: m_backgroundColor(1.0f, 1.0f, 1.0f)
+	: m_backgroundColor{ 1.0f, 1.0f, 1.0f }
 {
 	std::ifstream sceneFile(sceneFilePath, std::ios::in);
 
@@ -27,12 +29,7 @@ Scene::Scene(std::ifstream& sceneFile)
 	initScene(sceneFile);
 }
 
-std::vector<std::unique_ptr<Object>>& Scene::getSceneObjects()
-{
-	return m_sceneObjects;
-}
-
-IntersectionInfo Scene::intersect(const Ray& ray, int depth) const
+IntersectionInfo Scene::findIntersection(const Ray& ray, int depth) const
 {
 	if (depth <= 0)
 	{
@@ -48,14 +45,15 @@ IntersectionInfo Scene::intersect(const Ray& ray, int depth) const
 
 	for (size_t i = 0; i < m_sceneObjects.size(); ++i)
 	{
-		if (m_sceneObjects[i].get() == ray.StartingObject)
+		if (m_sceneObjects[i].get() == ray.getStartingObject())
 		{
 			continue;
 		}
+
 		IntersectionPoint point;
 		if (m_sceneObjects[i]->isIntersecting(&ray, point))
 		{
-			float distance2 = glm::distance2(ray.Origin, point.position);
+			float distance2 = glm::distance2(ray.getOrigin(), point.position);
 
 			if (distance2 < closestPointDistance2)
 			{
@@ -70,22 +68,12 @@ IntersectionInfo Scene::intersect(const Ray& ray, int depth) const
 	if (closestObjectIndex != noIntersection)
 	{
 		Object* intersectedObject = m_sceneObjects[closestObjectIndex].get();
-		auto info =  IntersectionInfo(true, intersectionPoint, intersectedObject->getColor(), intersectedObject);
-
-		auto random = Random::getInstancePtr();
-
-		vec3 direction = intersectionPoint.position + intersectionPoint.normal + glm::normalize(random->vector3());
-		Ray newRay = Ray(intersectionPoint.position, glm::normalize(direction - intersectionPoint.position), intersectedObject);
-		
-		IntersectionInfo info2 = intersect(newRay, depth - 1);
-		info.color = 0.5f * info2.color;
+		auto info = IntersectionInfo(intersectedObject, intersectionPoint);
 
 		return info;
 	}
 
-	auto no = IntersectionInfo::NoIntersection;
-	no.color = m_backgroundColor;
-	return no;
+	return IntersectionInfo::NoIntersection;
 }
 
 vec3 Scene::getBackgroundColor() const
@@ -105,8 +93,7 @@ void Scene::initScene(std::ifstream& sceneFile)
 		{
 			continue;
 		}
-
-		if (line == "StartSphere")
+		else if (line == "StartSphere")
 		{
 			readSphere(sceneFile);
 		}
@@ -115,20 +102,26 @@ void Scene::initScene(std::ifstream& sceneFile)
 
 void Scene::readSphere(std::ifstream& sceneFile)
 {
-	auto sphere = new Sphere();
-
-	std::string attribute;
+	std::string line;
+	std::map<std::string, std::string> attributes;
 	do
 	{
-		std::getline(sceneFile, attribute);
-		size_t equalSignPosition = attribute.find("=");
-		if (equalSignPosition == attribute.npos)
+		std::getline(sceneFile, line);
+		size_t equalSignPosition = line.find("=");
+		if (equalSignPosition == line.npos)
 		{
 			continue;
 		}
-		std::string name = attribute.substr(0, equalSignPosition);
-		std::string value = attribute.substr(equalSignPosition + 1, attribute.size() - (equalSignPosition + 1));
+		std::string name = line.substr(0, equalSignPosition);
+		std::string value = line.substr(equalSignPosition + 1, line.size() - (equalSignPosition + 1));
 
+		attributes.insert(std::make_pair(name, value));
+	} while (line != "EndSphere");
+
+	auto sphere = new Sphere();
+
+	for (auto& [name, value] : attributes)
+	{
 		if (name == "Position")
 		{
 			size_t leftBracketPos = value.find("(");
@@ -165,14 +158,13 @@ void Scene::readSphere(std::ifstream& sceneFile)
 			std::string yStr = value.substr(firstCommaPos + 1, secondCommaPos - firstCommaPos - 1);
 			std::string zStr = value.substr(secondCommaPos + 1, rightBracketPos - secondCommaPos - 1);
 
-			int r = std::stoi(xStr);
-			int g = std::stoi(yStr);
-			int b = std::stoi(zStr);
+			float r = std::stof(xStr);
+			float g = std::stof(yStr);
+			float b = std::stof(zStr);
 
 			sphere->setColor(vec3(r / 255.0f, g / 255.0f, b / 255.0f));
 		}
-
-	} while (attribute != "EndSphere");
+	}
 
 	m_sceneObjects.emplace_back(sphere);
 }

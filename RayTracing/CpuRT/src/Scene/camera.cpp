@@ -2,7 +2,7 @@
 #include "../Intersection/ray.h"
 
 Camera::Camera(vec2 resolution, float fov, vec3 position)
-    : m_resolution(resolution), m_fov(fov), m_position(position)
+	: m_resolution{ resolution }, m_fov{ fov }, m_position{ position }
 {
 	initRayGenerationVariables();
 }

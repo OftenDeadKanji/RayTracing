@@ -1,33 +1,32 @@
 #include "model.h"
-#include "../Shading/shading.h"
 #include "../Utilities/random.h"
+#include <cassert>
 
 MVC::Model::Model(vec2i textureResolution)
-	: m_camera(textureResolution, glm::radians(45.0f)), m_scene(), m_sampelsPerPixel(100), m_maxDepth(50)
+	: m_camera{ textureResolution, glm::radians(45.0f) }, m_scene{}, m_sampelsPerPixel{ 100 }, m_maxDepth{ 50 }
 {
+	assert(textureResolution.x >= textureResolution.y);
+
 	m_screenTexture.resize(static_cast<size_t>(textureResolution.x * textureResolution.y * 3));
-	const vec2i taskSize = vec2i(128, 128);
 
-	int xTaskCount = std::ceil(static_cast<float>(textureResolution.x) / taskSize.x);
-	int yTaskCount = std::ceil(static_cast<float>(textureResolution.y) / taskSize.y);
+	const int taskSize = 90;
 
-	for (int i = 0; i < xTaskCount; ++i)
+	int yTaskCount = std::ceil(static_cast<float>(textureResolution.y) / taskSize);
+
+	for (int j = 0; j < yTaskCount; ++j)
 	{
-		for (int j = 0; j < yTaskCount; ++j)
-		{
-			vec2i upperLeft = vec2i(i * taskSize.x, j * taskSize.y);
-			vec2i lowerRight = vec2i((i + 1) * taskSize.x, (j + 1) * taskSize.y);
+		int upper = j * taskSize;
+		int lower = (j + 1) * taskSize;
 
-			lowerRight.x = std::min(lowerRight.x, textureResolution.x - 1);
-			lowerRight.y = std::min(lowerRight.y, textureResolution.y - 1);
+		lower = std::min(lower, textureResolution.y - 1);
 
-			m_tasks.push(std::make_pair(upperLeft, lowerRight));
-		}
+		m_tasks.push(std::make_pair(upper, lower));
 	}
+
 	//int threadsCount = 1;
-	//int threadsCount = std::thread::hardware_concurrency() - 1;
+	int threadsCount = std::thread::hardware_concurrency() - 1;
 	//int threadsCount = std::thread::hardware_concurrency();
-	int threadsCount = 8;
+	//int threadsCount = 8;
 
 	for (int i = 0; i < threadsCount; i++)
 	{
@@ -71,19 +70,19 @@ void MVC::Model::thread_task(int threadId)
 		m_tasks.pop();
 		m_taskMutex.unlock();
 
-		generateImagePart(threadId, task.first.x, task.second.x, task.first.y, task.second.y);
+		generateImagePart(threadId, task.first, task.second);
 	}
 }
 
-void MVC::Model::generateImagePart(int threadId, int fromX, int toX, int fromY, int toY)
+void MVC::Model::generateImagePart(int threadId, int yStart, int yEnd)
 {
 	Random* random = Random::getInstancePtr();
 
-	for (int i = fromX; i <= toX; ++i)
+	for (int j = yStart; j <= yEnd; ++j)
 	{
-		for (int j = fromY; j <= toY; ++j)
+		for (int i = 0; i < m_camera.getResolution().x; ++i)
 		{
-			vec3 color(0.0f);
+			vec3 color{ 0.0f };
 			for (int s = 0; s < m_sampelsPerPixel; ++s)
 			{
 				if (m_threadTaskTermination[threadId])
@@ -97,27 +96,20 @@ void MVC::Model::generateImagePart(int threadId, int fromX, int toX, int fromY, 
 				float v = j + random->value();
 
 				Ray ray = m_camera.generateRay(u, v);
-				IntersectionInfo info = m_scene.intersect(ray, m_maxDepth);
+				IntersectionInfo info = m_scene.findIntersection(ray, m_maxDepth);
 
-				if (info.intersected)
+				if (info.intersectedObject != nullptr)
 				{
-					if (info.intersectionPoint.side == IntersectionPoint::FaceSide::front)
+					if (info.intersectionPoint->side == IntersectionPoint::FaceSide::Front)
 					{
-						vec3 objectColor = info.color * info.intersectedObject->getColor();
-						vec3 position = info.intersectionPoint.position;
-						vec3 normal = glm::normalize(info.intersectionPoint.normal);
-						vec3 lightDirection = glm::normalize(vec3(0.5f, -0.5f, -0.5f));
-						vec3 viewDirection = glm::normalize(vec3(ray.Direction));
-
-						//colorToAdd = Shading::getColor_Phong(objectColor, position, normal, lightDirection, viewDirection);
-						colorToAdd = objectColor;
+						colorToAdd = info.intersectedObject->getColor();
 					}
 				}
 				color += colorToAdd;
 			}
 
 			color /= m_sampelsPerPixel;
-			setTexturePixelColor(i, j, color);
+			setTexturePixelColor(vec2i{ i, j }, color);
 		}
 	}
 }
@@ -127,12 +119,12 @@ const std::vector<float>& MVC::Model::getScreenTexture() const
 	return m_screenTexture;
 }
 
-vec2i MVC::Model::getTextureResolution() const
+const vec2i& MVC::Model::getTextureResolution() const
 {
-	return m_camera.Resolution;
+	return m_camera.getResolution();
 }
 
-void MVC::Model::startThreadedGenerating(vec2 viewportSize)
+void MVC::Model::startThreadedGenerating()
 {
 	auto threadsCount = m_threadPool.size();
 
@@ -142,13 +134,13 @@ void MVC::Model::startThreadedGenerating(vec2 viewportSize)
 	}
 }
 
-void MVC::Model::setTexturePixelColor(int x, int y, vec3 color)
+void MVC::Model::setTexturePixelColor(vec2i position, vec3 color)
 {
-	int flippedY = m_camera.Resolution.y - y - 1;
+	int flippedY = m_camera.getResolution().y - position.y - 1;
 
-	size_t coord = static_cast<size_t>(flippedY * m_camera.Resolution.x + x);
+	size_t coord = static_cast<size_t>(flippedY * m_camera.getResolution().x + position.x);
 
-	m_screenTexture[coord * 3] = color.r;
+	m_screenTexture[coord * 3 + 0] = color.r;
 	m_screenTexture[coord * 3 + 1] = color.g;
 	m_screenTexture[coord * 3 + 2] = color.b;
 }

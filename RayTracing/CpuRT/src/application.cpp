@@ -8,10 +8,10 @@ Application::Application()
 void Application::run()
 {
 	m_lastFrameStart = std::chrono::high_resolution_clock::now();
-	while(m_controller.MainLoopCondition)
+	while(m_controller.getMainLoopCondition())
 	{
 		const float deltaTime = calculateDeltaTime();
-		//std::cout << deltaTime << '\n';
+		
 		m_controller.processInput(deltaTime);
 		m_controller.update(deltaTime);
 		m_controller.render(deltaTime);

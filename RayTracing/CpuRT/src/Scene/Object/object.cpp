@@ -1,31 +1,31 @@
 #include "object.h"
 
-Object::Object()
-	: m_transform(), m_color(vec3(0.3f, 1.0f, 0.0f))
+Object::Object(const vec3& color)
+	: m_transform{}, m_color{color}
 {
 }
 
-Object::Object(vec3 position)
-	: m_transform(position), m_color(vec3(0.3f, 1.0f, 0.0f))
+Object::Object(const Transform& transform, const vec3& color)
+	: m_transform{ transform }, m_color{ color }
 {
 }
 
-Object::Object(Transform transform)
-	: m_transform(transform), m_color(vec3(0.3f, 1.0f, 0.0f))
-{
-}
-
-void Object::setPosition(vec3 position)
+void Object::setPosition(const vec3& position)
 {
 	m_transform.position = position;
 }
 
-vec3 Object::getColor() const
+vec3& Object::getColor()
 {
 	return m_color;
 }
 
-void Object::setColor(vec3 color)
+const vec3& Object::getColor() const
+{
+	return m_color;
+}
+
+void Object::setColor(const vec3& color)
 {
 	m_color = color;
 }

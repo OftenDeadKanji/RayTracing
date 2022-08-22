@@ -9,10 +9,8 @@ public:
 	Camera(vec2 resolution, float fov, vec3 m_position = vec3(0.0f, 0.0f, 0.0f));
 
 	vec2 getResolution() const;
-	__declspec(property(get = getResolution)) vec2 Resolution;
 	
 	float getFov() const;
-	__declspec(property(get = getFov)) float Fov;
 
 	Ray generateRay(float x, float y);
 private:

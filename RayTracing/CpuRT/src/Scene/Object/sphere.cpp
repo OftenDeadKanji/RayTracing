@@ -4,18 +4,13 @@
 #include "glm/gtx/norm.hpp"
 #include "glm/gtx/optimum_pow.hpp"
 
-Sphere::Sphere()
-	: Object(), m_radius(1.0f)
+Sphere::Sphere(const vec3& color)
+	: Object{ color }, m_radius{ 1.0f }
 {
 }
 
-Sphere::Sphere(float radius, vec3 position)
-	: Object(position), m_radius(radius)
-{
-}
-
-Sphere::Sphere(float radius, Transform transform)
-	: Object(transform), m_radius(radius)
+Sphere::Sphere(float radius, const Transform& position, const vec3& color)
+	: Object{ position, color }, m_radius{ radius }
 {
 }
 
@@ -24,10 +19,10 @@ bool Sphere::isIntersecting(const Ray* ray, IntersectionPoint& intersectionPoint
 	using FaceSide = IntersectionPoint::FaceSide;
 
 	//at2 + bt + c = 0
-	vec3 origin_center = ray->Origin - m_transform.position;
+	vec3 origin_center = ray->getOrigin() - m_transform.position;
 
-	float a = glm::length2(ray->Direction);
-	float half_b = glm::dot(ray->Direction, origin_center);
+	float a = glm::length2(ray->getDirection());
+	float half_b = glm::dot(ray->getDirection(), origin_center);
 	float c = glm::length2(origin_center) - glm::pow2(m_radius);
 
 	//solving quadriatic equation
@@ -41,20 +36,20 @@ bool Sphere::isIntersecting(const Ray* ray, IntersectionPoint& intersectionPoint
 	float delta_sqroot = glm::sqrt(delta);
 	float t = (-half_b - delta_sqroot) / a;
 
-	if (t > ray->MaxT || t < 0.00001f)
+	if (t > ray->getMaxT() || t < ray->getMinT())
 	{
 		return false;
 	}
 
-	vec3 point = ray->Origin + t * ray->Direction;
+	vec3 point = ray->getOrigin() + t * ray->getDirection();
 	vec3 normal = glm::normalize(point - m_transform.position);
-	FaceSide side = FaceSide::front;
+	FaceSide side = FaceSide::Front;
 	
-	float dot = glm::dot(ray->Direction, normal);
+	float dot = glm::dot(ray->getDirection(), normal);
 	if (dot > 0.0f)
 	{
 		normal = -normal;
-		side = FaceSide::back;
+		side = FaceSide::Back;
 	}
 
 	intersectionPoint = IntersectionPoint(point, normal, side);

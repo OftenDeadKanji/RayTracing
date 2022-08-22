@@ -21,9 +21,7 @@ namespace MVC
 		void generateTexture(const std::vector<float>& texture, int width, int height);
 	private:
 		void initRendering();
-		void updateQuadTextureCoords(vec2 textureResolution);
 
-		Controller* m_controllerPtr;
 		Window m_window;
 		EventManager m_eventManager;
 

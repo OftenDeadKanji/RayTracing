@@ -12,11 +12,7 @@ public:
 	Scene(const std::string& sceneFilePath = "scene.rt");
 	Scene(std::ifstream& sceneFile);
 
-	std::vector<std::unique_ptr<Object>>& getSceneObjects();
-
-	__declspec(property(get=getSceneObjects)) std::vector<std::unique_ptr<Object>> SceneObjects;
-
-	IntersectionInfo intersect(const Ray& ray, int depth = 1) const;
+	IntersectionInfo findIntersection(const Ray& ray, int depth = 1) const;
 
 	vec3 getBackgroundColor() const;
 private:

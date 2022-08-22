@@ -3,10 +3,10 @@
 namespace MVC
 {
 	Controller::Controller()
-		: m_view(*this, WindowProperties(1600, 900, "CPU RayTracing")), m_model(vec2( 1600, 900 ))
+		: m_view{ *this, WindowProperties{vec2i{1600, 900}, "CPU RayTracing"} }, m_model{ vec2{1600, 900} }
 	{
 		initView();
-		m_model.startThreadedGenerating(vec2(1600, 900));
+		m_model.startThreadedGenerating();
 	}
 
 	void Controller::initView()
@@ -16,8 +16,8 @@ namespace MVC
 			closeWindowCallback();
 		});
 
-		auto& textureVector = m_model.ScreenTexture;
-		auto textureSize = m_model.getTextureResolution();
+		const auto& textureVector = m_model.getScreenTexture();
+		const auto& textureSize = m_model.getTextureResolution();
 
 		m_view.generateTexture(textureVector, textureSize.x, textureSize.y);
 	}

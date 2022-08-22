@@ -24,5 +24,5 @@ public:
 	void clearEventQueue();
 	EventType getEventTypeFromQueue();
 protected:
-	std::queue<EventType> eventQueue;
+	std::queue<EventType> m_eventQueue;
 };

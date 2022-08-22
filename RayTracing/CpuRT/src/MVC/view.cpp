@@ -5,7 +5,7 @@
 namespace MVC
 {
 	View::View(Controller& controller, const WindowProperties& windowProperties)
-		: m_controllerPtr(&controller), m_window(windowProperties)
+		: m_window(windowProperties)
 	{
 		m_window.attachEventManager(m_eventManager);
 
@@ -60,7 +60,7 @@ namespace MVC
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, m_texture);
-		glUniform1i(glGetUniformLocation(m_shader, "renderedImage"), 0); // manually
+		glUniform1i(glGetUniformLocation(m_shader, "renderedImage"), 0);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_FLOAT, texture.data());
 
 		glBindVertexArray(m_textureQuadVAO);
@@ -79,6 +79,7 @@ namespace MVC
 	{
 		glGenTextures(1, &m_texture);
 		glBindTexture(GL_TEXTURE_2D, m_texture);
+
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
@@ -86,8 +87,6 @@ namespace MVC
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_FLOAT, texture.data());
-
-		//updateQuadTextureCoords(vec2(width, height));
 	}
 
 	void View::initRendering()
@@ -116,7 +115,7 @@ namespace MVC
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 		glEnableVertexAttribArray(1);
 
-		const char* const vertexShaderCode = R"(
+		auto vertexShaderCode = R"(
 			#version 430
 			
 			layout (location = 0) in vec3 in_Position;
@@ -194,32 +193,5 @@ namespace MVC
 
 		glDeleteShader(vertexShader);
 		glDeleteShader(fragmentShader);
-	}
-
-	void View::updateQuadTextureCoords(vec2 textureResolution)
-	{
-		vec2 windowSize = m_window.getSize();
-		bool isWindowWidthBigger = windowSize.x >= windowSize.y;
-
-		if (isWindowWidthBigger)
-		{
-			float aspectRatio = windowSize.x / windowSize.y;
-			//vec2 cameraResolution = textureResolution;
-
-			float x = (1.0f / aspectRatio);
-
-			float upperBoundary[] = { (1.0f - x) / 2.0f };
-			float lowerBoundary[] = { 1.0f - upperBoundary[0]};
-
-			glBindBuffer(GL_ARRAY_BUFFER, m_textureQuadVBO);
-			
-			glBufferSubData(GL_ARRAY_BUFFER, 4 * sizeof(float), 1 * sizeof(float), upperBoundary);
-			glBufferSubData(GL_ARRAY_BUFFER, 9 * sizeof(float), 1 * sizeof(float), lowerBoundary);
-			glBufferSubData(GL_ARRAY_BUFFER, 14 * sizeof(float), 1 * sizeof(float), upperBoundary);
-
-			glBufferSubData(GL_ARRAY_BUFFER, 19 * sizeof(float), 1 * sizeof(float), upperBoundary);
-			glBufferSubData(GL_ARRAY_BUFFER, 24 * sizeof(float), 1 * sizeof(float), lowerBoundary);
-			glBufferSubData(GL_ARRAY_BUFFER, 29 * sizeof(float), 1 * sizeof(float), lowerBoundary);
-		}
 	}
 }

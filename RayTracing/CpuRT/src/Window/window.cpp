@@ -61,14 +61,17 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 Window::Window(WindowProperties properties)
 	: m_properties(std::move(properties))
 {
+	assert(properties.size.x >= properties.size.y);
+
 	glfwInit();
 
 	this->createGLFWWindow();
+	this->centerWindow();
 	this->initializeOpenGL();
 	this->initImGUI();
 
 	glfwSetInputMode(this->m_glfwWindowPtr, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-	glfwSetCursorPos(this->m_glfwWindowPtr, this->m_properties.width / 2.0, this->m_properties.height / 2.0);
+	glfwSetCursorPos(this->m_glfwWindowPtr, this->m_properties.size.x / 2.0, this->m_properties.size.y / 2.0);
 }
 
 Window::Window(Window&& other) noexcept
@@ -103,17 +106,21 @@ Window& Window::operator=(Window&& other) noexcept
 	return *this;
 }
 
-void Window::setSize(const Size& size)
+void Window::setSize(const vec2i& size)
 {
-	this->m_properties.width = size.x;
-	this->m_properties.height = size.y;
+	this->m_properties.size = size;
 
-	glfwSetWindowSize(this->m_glfwWindowPtr, this->m_properties.width, this->m_properties.height);
+	glfwSetWindowSize(this->m_glfwWindowPtr, this->m_properties.size.x, this->m_properties.size.y);
 }
 
-Size Window::getSize()
+const vec2i& Window::getSize() const
 {
-	return { this->m_properties.width, this->m_properties.height };
+	return m_properties.size;
+}
+
+vec2i& Window::getSize()
+{
+	return m_properties.size;
 }
 
 void Window::setTitle(const std::string& title)
@@ -207,7 +214,7 @@ void Window::cursorPositionCallback(vec2 position) const
 
 void Window::resetCursorPos()
 {
-	glfwSetCursorPos(this->m_glfwWindowPtr, this->m_properties.width / 2.0, this->m_properties.height / 2.0);
+	glfwSetCursorPos(this->m_glfwWindowPtr, this->m_properties.size.x / 2.0, this->m_properties.size.y / 2.0);
 }
 
 GLFWwindow* Window::getGLFWWindow() const
@@ -223,8 +230,8 @@ void Window::createGLFWWindow()
 	glfwWindowHint(GLFW_SAMPLES, 4);
 
 	this->m_glfwWindowPtr = glfwCreateWindow(
-		this->m_properties.width,
-		this->m_properties.height,
+		this->m_properties.size.x,
+		this->m_properties.size.y,
 		this->m_properties.title.c_str(),
 		nullptr,
 		nullptr

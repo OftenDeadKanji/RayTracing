@@ -15,19 +15,19 @@ namespace MVC
 	public:
 		Model(vec2i textureResolution);
 		~Model();
+
 		void update();
 
+		void startThreadedGenerating();
 		void thread_task(int threadId);
-		void generateImagePart(int threadId, int fromX, int toX, int fromY, int toY);
+		void generateImagePart(int threadId, int yStart, int yEnd);
 
 		const std::vector<float>& getScreenTexture() const;
-		__declspec(property(get = getScreenTexture)) std::vector<float> ScreenTexture;
 
-		vec2i getTextureResolution() const;
+		const vec2i& getTextureResolution() const;
 
-		void startThreadedGenerating(vec2 viewportSize);
 	private:
-		void setTexturePixelColor(int x, int y, vec3 color);
+		void setTexturePixelColor(vec2i position, vec3 color);
 
 		Scene m_scene;
 		Camera m_camera;
@@ -36,7 +36,7 @@ namespace MVC
 		int m_sampelsPerPixel;
 		int m_maxDepth;
 
-		std::queue<std::pair<vec2i, vec2i>> m_tasks;
+		std::queue<std::pair<int, int>> m_tasks;
 		std::mutex m_taskMutex;
 		std::vector<std::thread> m_threadPool;
 		std::vector<bool> m_threadTaskTermination;

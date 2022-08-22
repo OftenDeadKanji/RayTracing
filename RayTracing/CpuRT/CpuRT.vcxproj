@@ -162,7 +162,6 @@
   <ItemGroup>
     <ClCompile Include="src\Utilities\random.cpp" />
     <ClCompile Include="src\Intersection\intersectionPoint.cpp" />
-    <ClCompile Include="src\Shading\shading.cpp" />
     <ClCompile Include="src\Intersection\intersectionInfo.cpp" />
     <ClCompile Include="src\Intersection\ray.cpp" />
     <ClCompile Include="src\Scene\camera.cpp" />
@@ -193,7 +192,6 @@
   <ItemGroup>
     <ClInclude Include="src\Utilities\random.h" />
     <ClInclude Include="src\Intersection\intersectionPoint.h" />
-    <ClInclude Include="src\Shading\shading.h" />
     <ClInclude Include="src\Intersection\intersectionInfo.h" />
     <ClInclude Include="src\Intersection\ray.h" />
     <ClInclude Include="src\Scene\camera.h" />

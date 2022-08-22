@@ -5,8 +5,8 @@
 struct Transform
 {
 	Transform();
-	Transform(vec3 position);
-	Transform(vec3 position, vec3 rotation, vec3 scale);
+	Transform(const vec3& position);
+	Transform(const vec3& position, const vec3& rotation, const vec3& scale);
 
 	vec3 position;
 	glm::quat rotation;

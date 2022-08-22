@@ -8,5 +8,3 @@ using vec4 = glm::vec4;
 using vec2i = glm::ivec2;
 using vec3i = glm::ivec3;
 using vec4i = glm::ivec4;
-
-using Size = vec2i;
