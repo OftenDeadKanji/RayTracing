@@ -3,7 +3,7 @@
 #include <cassert>
 
 MVC::Model::Model(vec2i textureResolution)
-	: m_camera{ textureResolution, glm::radians(45.0f) }, m_scene{}, m_sampelsPerPixel{ 100 }, m_maxDepth{ 50 }
+	: m_camera{ textureResolution, glm::radians(45.0f) }, m_scene{}, m_sampelsPerPixel{ 100 }, m_maxDepth{ 1 }
 {
 	assert(textureResolution.x >= textureResolution.y);
 
@@ -24,8 +24,8 @@ MVC::Model::Model(vec2i textureResolution)
 	}
 
 	//int threadsCount = 1;
-	int threadsCount = std::thread::hardware_concurrency() - 1;
-	//int threadsCount = std::thread::hardware_concurrency();
+	//int threadsCount = std::thread::hardware_concurrency() - 1;
+	int threadsCount = std::thread::hardware_concurrency();
 	//int threadsCount = 8;
 
 	for (int i = 0; i < threadsCount; i++)
@@ -102,9 +102,12 @@ void MVC::Model::generateImagePart(int threadId, int yStart, int yEnd)
 				{
 					if (info.intersectionPoint->side == IntersectionPoint::FaceSide::Front)
 					{
-						colorToAdd = info.intersectedObject->getColor();
+						colorToAdd = m_scene.calculateShadowRaysFinalColor(info.intersectionPoint.value(), ray) * info.intersectedObject->getColor();
 					}
 				}
+
+				
+
 				color += colorToAdd;
 			}
 

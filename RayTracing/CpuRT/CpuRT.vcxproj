@@ -160,6 +160,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Scene\Lighting\pointLight.cpp" />
+    <ClCompile Include="src\Scene\Lighting\lightSource.cpp" />
     <ClCompile Include="src\Utilities\random.cpp" />
     <ClCompile Include="src\Intersection\intersectionPoint.cpp" />
     <ClCompile Include="src\Intersection\intersectionInfo.cpp" />
@@ -190,6 +192,8 @@
     <ClCompile Include="src\Window\window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Scene\Lighting\pointLight.h" />
+    <ClInclude Include="src\Scene\Lighting\lightSource.h" />
     <ClInclude Include="src\Utilities\random.h" />
     <ClInclude Include="src\Intersection\intersectionPoint.h" />
     <ClInclude Include="src\Intersection\intersectionInfo.h" />
