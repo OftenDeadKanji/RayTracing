@@ -77,7 +77,7 @@ IntersectionInfo Scene::findIntersection(const Ray& ray, int depth) const
 	return IntersectionInfo::NoIntersection;
 }
 
-vec3 Scene::calculateShadowRaysFinalColor(const IntersectionPoint& point, const Ray& cameraRay)
+vec3 Scene::calculateShadowRaysFinalColor(const IntersectionPoint& point, const Ray& cameraRay) const
 {
 	vec3 color{ 0.0f };
 	for (auto& lightSource : m_sceneLightSources)
@@ -85,9 +85,9 @@ vec3 Scene::calculateShadowRaysFinalColor(const IntersectionPoint& point, const 
 		vec3 shadowRayDirection = lightSource->createShadowRay(point, cameraRay);
 		Ray ray{ point.position, shadowRayDirection };
 
-		auto intercertion = findIntersection(ray);
+		auto intersection = findIntersection(ray);
 
-		if (intercertion.intersectedObject == nullptr)
+		if (intersection.intersectedObject == nullptr)
 		{
 			color += lightSource->calculateShadowRayColor(point, cameraRay);
 		}
@@ -112,7 +112,8 @@ void Scene::initScene(std::ifstream& sceneFile)
 		{
 			continue;
 		}
-		else if (line == "StartSphere")
+		
+		if (line == "StartSphere")
 		{
 			readSphere(sceneFile);
 		}
@@ -130,8 +131,8 @@ void Scene::readSphere(std::ifstream& sceneFile)
 	do
 	{
 		std::getline(sceneFile, line);
-		size_t equalSignPosition = line.find("=");
-		if (equalSignPosition == line.npos)
+		size_t equalSignPosition = line.find('=');
+		if (equalSignPosition == std::string::npos)
 		{
 			continue;
 		}
@@ -147,11 +148,11 @@ void Scene::readSphere(std::ifstream& sceneFile)
 	{
 		if (name == "Position")
 		{
-			size_t leftBracketPos = value.find("(");
-			size_t rightBracketPos = value.find(")");
+			size_t leftBracketPos = value.find('(');
+			size_t rightBracketPos = value.find(')');
 
-			size_t firstCommaPos = value.find(",");
-			size_t secondCommaPos = value.find(",", firstCommaPos + 1);
+			size_t firstCommaPos = value.find(',');
+			size_t secondCommaPos = value.find(',', firstCommaPos + 1);
 
 			std::string xStr = value.substr(leftBracketPos + 1, firstCommaPos - leftBracketPos - 1);
 			std::string yStr = value.substr(firstCommaPos + 1, secondCommaPos - firstCommaPos - 1);
@@ -171,11 +172,11 @@ void Scene::readSphere(std::ifstream& sceneFile)
 		}
 		else if (name == "Color")
 		{
-			size_t leftBracketPos = value.find("(");
-			size_t rightBracketPos = value.find(")");
+			size_t leftBracketPos = value.find('(');
+			size_t rightBracketPos = value.find(')');
 
-			size_t firstCommaPos = value.find(",");
-			size_t secondCommaPos = value.find(",", firstCommaPos + 1);
+			size_t firstCommaPos = value.find(',');
+			size_t secondCommaPos = value.find(',', firstCommaPos + 1);
 
 			std::string xStr = value.substr(leftBracketPos + 1, firstCommaPos - leftBracketPos - 1);
 			std::string yStr = value.substr(firstCommaPos + 1, secondCommaPos - firstCommaPos - 1);
@@ -199,8 +200,8 @@ void Scene::readPointLight(std::ifstream& sceneFile)
 	do
 	{
 		std::getline(sceneFile, line);
-		size_t equalSignPosition = line.find("=");
-		if (equalSignPosition == line.npos)
+		size_t equalSignPosition = line.find('=');
+		if (equalSignPosition == std::string::npos)
 		{
 			continue;
 		}
@@ -216,11 +217,11 @@ void Scene::readPointLight(std::ifstream& sceneFile)
 	{
 		if (name == "Position")
 		{
-			size_t leftBracketPos = value.find("(");
-			size_t rightBracketPos = value.find(")");
+			size_t leftBracketPos = value.find('(');
+			size_t rightBracketPos = value.find(')');
 
-			size_t firstCommaPos = value.find(",");
-			size_t secondCommaPos = value.find(",", firstCommaPos + 1);
+			size_t firstCommaPos = value.find(',');
+			size_t secondCommaPos = value.find(',', firstCommaPos + 1);
 
 			std::string xStr = value.substr(leftBracketPos + 1, firstCommaPos - leftBracketPos - 1);
 			std::string yStr = value.substr(firstCommaPos + 1, secondCommaPos - firstCommaPos - 1);
@@ -234,11 +235,11 @@ void Scene::readPointLight(std::ifstream& sceneFile)
 		}
 		else if (name == "DiffuseIntensity")
 		{
-			size_t leftBracketPos = value.find("(");
-			size_t rightBracketPos = value.find(")");
+			size_t leftBracketPos = value.find('(');
+			size_t rightBracketPos = value.find(')');
 
-			size_t firstCommaPos = value.find(",");
-			size_t secondCommaPos = value.find(",", firstCommaPos + 1);
+			size_t firstCommaPos = value.find(',');
+			size_t secondCommaPos = value.find(',', firstCommaPos + 1);
 
 			std::string xStr = value.substr(leftBracketPos + 1, firstCommaPos - leftBracketPos - 1);
 			std::string yStr = value.substr(firstCommaPos + 1, secondCommaPos - firstCommaPos - 1);
@@ -252,11 +253,11 @@ void Scene::readPointLight(std::ifstream& sceneFile)
 		}
 		else if (name == "SpecularIntensity")
 		{
-			size_t leftBracketPos = value.find("(");
-			size_t rightBracketPos = value.find(")");
+			size_t leftBracketPos = value.find('(');
+			size_t rightBracketPos = value.find(')');
 
-			size_t firstCommaPos = value.find(",");
-			size_t secondCommaPos = value.find(",", firstCommaPos + 1);
+			size_t firstCommaPos = value.find(',');
+			size_t secondCommaPos = value.find(',', firstCommaPos + 1);
 
 			std::string xStr = value.substr(leftBracketPos + 1, firstCommaPos - leftBracketPos - 1);
 			std::string yStr = value.substr(firstCommaPos + 1, secondCommaPos - firstCommaPos - 1);

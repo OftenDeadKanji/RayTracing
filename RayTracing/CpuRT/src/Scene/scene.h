@@ -15,7 +15,7 @@ public:
 
 	IntersectionInfo findIntersection(const Ray& ray, int depth = 1) const;
 
-	vec3 calculateShadowRaysFinalColor(const IntersectionPoint& point, const Ray& cameraRay);
+	vec3 calculateShadowRaysFinalColor(const IntersectionPoint& point, const Ray& cameraRay) const;
 
 	vec3 getBackgroundColor() const;
 private:

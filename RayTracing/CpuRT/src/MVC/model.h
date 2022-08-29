@@ -1,10 +1,8 @@
 #pragma once
 #include "../Scene/scene.h"
 #include "../Scene/camera.h"
-#include "stb_image/stb_image.h"
 #include <queue>
 #include <utility>
-#include "../Intersection/ray.h"
 #include <thread>
 #include <mutex>
 
@@ -24,7 +22,7 @@ namespace MVC
 
 		const std::vector<float>& getScreenTexture() const;
 
-		const vec2i& getTextureResolution() const;
+		vec2i getTextureResolution() const;
 
 	private:
 		void setTexturePixelColor(vec2i position, vec3 color);
@@ -33,7 +31,7 @@ namespace MVC
 		Camera m_camera;
 		std::vector<float> m_screenTexture;
 
-		int m_sampelsPerPixel;
+		int m_samplesPerPixel;
 		int m_maxDepth;
 
 		std::queue<std::pair<int, int>> m_tasks;

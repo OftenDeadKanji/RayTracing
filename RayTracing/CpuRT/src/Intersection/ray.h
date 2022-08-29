@@ -10,11 +10,9 @@ public:
 	Ray();
 	Ray(vec3 origin, vec3 direction, float minT = 0.0f, float maxT = std::numeric_limits<float>::max(), Object* startingObject = nullptr);
 
-	//vec3& getOrigin();
 	const vec3& getOrigin() const;
 	void setOrigin(vec3 origin);
 
-	//vec3& getDirection();
 	const vec3& getDirection() const;
 	void setDirection(vec3 direction);
 
@@ -22,10 +20,9 @@ public:
 	void setMaxT(float maxT);
 
 	float getMinT() const;
-	void setMinT(float maxT);
+	void setMinT(float minT);
 
-	//Object* getStartingObject();
-	Object* const getStartingObject() const;
+	Object* getStartingObject() const;
 	void setStartingObject(Object* object);
 
 private:

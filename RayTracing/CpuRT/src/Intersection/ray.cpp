@@ -10,11 +10,6 @@ Ray::Ray(vec3 origin, vec3 direction, float minT, float maxT, Object* startingOb
 {
 }
 
-//vec3& Ray::getOrigin()
-//{
-//	return m_origin;
-//}
-
 const vec3& Ray::getOrigin() const
 {
 	return m_origin;
@@ -24,11 +19,6 @@ void Ray::setOrigin(vec3 origin)
 {
 	m_origin = origin;
 }
-
-//vec3& Ray::getDirection()
-//{
-//	return m_direction;
-//}
 
 const vec3& Ray::getDirection() const
 {
@@ -52,19 +42,15 @@ void Ray::setMaxT(float maxT)
 
 float Ray::getMinT() const
 {
-	return 0.0f;
+	return m_minT;
 }
 
-void Ray::setMinT(float maxT)
+void Ray::setMinT(float minT)
 {
+	m_minT = minT;
 }
 
-//Object* Ray::getStartingObject()
-//{
-//	return m_startingObject;
-//}
-
-Object* const Ray::getStartingObject() const
+Object* Ray::getStartingObject() const
 {
 	return m_startingObject;
 }

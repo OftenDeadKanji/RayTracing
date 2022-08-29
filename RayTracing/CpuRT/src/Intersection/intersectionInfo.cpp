@@ -8,6 +8,6 @@ IntersectionInfo::IntersectionInfo()
 }
 
 IntersectionInfo::IntersectionInfo(const Object* intersectedObject, IntersectionPoint intersectionPoint)
-	: intersectedObject{ intersectedObject }, intersectionPoint{ std::move(intersectionPoint) }
+	: intersectedObject{ intersectedObject }, intersectionPoint{intersectionPoint}
 {
 }

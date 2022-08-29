@@ -1,6 +1,5 @@
 #pragma once
 #include "intersectionPoint.h"
-#include "../Utilities/types.h"
 #include <optional>
 
 class Object;
