@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include "Application/application.hpp"
+#include "math/mathUtils.hpp"
 
 #ifdef _DIST
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
