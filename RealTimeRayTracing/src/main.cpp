@@ -11,11 +11,13 @@ int main()
 #ifdef _DEBUG
 	std::cout << "Hello there!" << std::endl;
 #endif
-
+	
+	glfwInit();
 	{
-		RT::Application app;
+		Application app;
 		app.run();
 	}
+	glfwTerminate();
 
 	return 0;
 }

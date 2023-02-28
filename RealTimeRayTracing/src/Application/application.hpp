@@ -1,16 +1,19 @@
 #pragma once
+#include "../RenderingSystem/Window/window.hpp"
+#include "EventSystem/IWindowListener.hpp"
 
-namespace RT
+class Application
+	: public IWindowListener
 {
-	class Application
-	{
-	public:
-		Application() = default;
+public:
+	Application();
 
-		void run();
-	private:
-		bool m_mainLoopCondition = true;
+	void run();
 
-		void processInput();
-	};
-}
+	void onWindowClose() override;
+private:
+	bool m_mainLoopCondition = true;
+	Window m_window;
+
+	void processInput();
+};

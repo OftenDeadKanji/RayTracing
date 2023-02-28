@@ -1,8 +1,6 @@
 #ifndef __MATH_UTILS_HPP__
 #define __MATH_UTILS_HPP__
-
 #include "Eigen/Dense"
-#include <cstdint>
 
 namespace math
 {
@@ -12,7 +10,6 @@ namespace math
 	using Vec4f = Eigen::Matrix<float, 1, 4, Eigen::RowMajor>;
 
 	using Mat4f = Eigen::Matrix<float, 4, 4, Eigen::RowMajor>;
-
 
 
 }

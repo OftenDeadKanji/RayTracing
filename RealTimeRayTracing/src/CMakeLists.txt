@@ -5,4 +5,5 @@ target_sources(RTRT
 
 add_subdirectory("Application")
 add_subdirectory("RenderingSystem")
-add_subdirectory("math")
+add_subdirectory("Math")
+add_subdirectory("Utils")
