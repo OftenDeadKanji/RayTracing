@@ -1,15 +1,23 @@
 #include "window.hpp"
 #include "../../Application/EventSystem/eventManager.hpp"
+#include <iostream>
 
 #pragma region GLFW Callbacks
 void framebuffer_size_callback(GLFWwindow* window, const int width, const int height)
 {
-	//glViewport(0, 0, width, height);
+	glViewport(0, 0, width, height);
+
+	std::cout << width << '\t' << height << '\n';
 }
 
 void window_close_callback(GLFWwindow* window)
 {
 	EventManager::getInstance()->onWindowClose();
+}
+
+void window_resize_callback(GLFWwindow* window, int width, int height)
+{
+	std::cout << width << '\t' << height << '\n';
 }
 
 //void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -40,6 +48,11 @@ void window_close_callback(GLFWwindow* window)
 //}
 #pragma endregion
 
+Window::~Window()
+{
+	glfwDestroyWindow(m_glfwWindow);
+}
+
 void Window::init(WindowProperties properties)
 {
 	m_properties = std::move(properties);
@@ -65,6 +78,13 @@ void Window::init(WindowProperties properties)
 	glfwMakeContextCurrent(m_glfwWindow);
 
 	glfwSetWindowCloseCallback(m_glfwWindow, window_close_callback);
+	glfwSetFramebufferSizeCallback(m_glfwWindow, framebuffer_size_callback);
+	glfwSetWindowSizeCallback(m_glfwWindow, window_resize_callback);
+
+	if (gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
+	{
+		glViewport(0, 0, m_properties.size.x(), m_properties.size.y());
+	}
 }
 
 void Window::createWindowedWindow()

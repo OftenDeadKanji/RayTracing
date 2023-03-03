@@ -10,23 +10,6 @@ add_subdirectory("dependencies/src/")
 
 include_directories("dependencies/include/")
 
-#target_precompile_headers(RTRT PRIVATE 
-#	# C++ std
-#	<cstdint>
-#	<string>
-#	<vector>
-#	<memory>
-#
-#	# deps
-#	"dependencies/include/Eigen/Dense"
-#	"dependencies/include/glad/glad.h"
-#	"dependencies/include/GLFW/glfw3.h"
-#
-#	# this project
-#	"src/Math/mathUtils.hpp"
-#	"src/Utils/nonCopyable.hpp"
-#)
-
 set(MSG_PREFIX "[RTRT] -- ")
 set(LIB_DIR "dependencies/lib/")
 

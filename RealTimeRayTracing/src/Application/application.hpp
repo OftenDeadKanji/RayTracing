@@ -13,7 +13,8 @@ public:
 	void onWindowClose() override;
 private:
 	bool m_mainLoopCondition = true;
+	
 	Window m_window;
-
+	
 	void processInput();
 };
