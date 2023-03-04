@@ -23,6 +23,12 @@ public:
 		return m_properties.size;
 	}
 
+	void setTitle(std::string title)
+	{
+		m_properties.title = std::move(title);
+		glfwSetWindowTitle(m_glfwWindow, m_properties.title.c_str());
+	}
+
 private:
 	WindowProperties m_properties;
 	GLFWwindow* m_glfwWindow;

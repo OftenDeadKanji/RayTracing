@@ -3,12 +3,14 @@
 #include "../../Math/mathUtils.hpp"
 #include "../../Utils/nonCopyable.hpp"
 #include <memory>
+#include "../../Math/sphere.hpp"
 
 namespace math
 {
 	struct Ray;
-	struct Sphere;
+	//struct Sphere;
 	struct Plane;
+	struct IntersectionInfo;
 }
 
 class Window;
@@ -17,7 +19,7 @@ class Scene
 	: public NonCopyable
 {
 private:
-	Scene() = default;
+	Scene();
 public:
 	static Scene* createInstance()
 	{
@@ -44,8 +46,11 @@ private:
 	static std::unique_ptr<Scene> s_instance;
 
 	math::Vec3f m_backgroundColor;
+	
+	std::vector<math::Sphere> m_spheres;
 
 	math::Vec3f calculatePixelColor(const math::Vec2i& pixelCoordinate /*Camera& camera*/);
+	void findIntersection(const math::Ray& ray, math::IntersectionInfo& outIntersection, math::Vec3f& outColor);
 };
 
 #endif
