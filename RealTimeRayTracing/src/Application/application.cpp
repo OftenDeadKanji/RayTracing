@@ -9,7 +9,7 @@ Application::Application()
 	));
 
 	auto* renderer = Renderer::createInstance();
-	renderer->initScreenTexture(math::Vec2i(1600, 900));
+	renderer->initScreenTexture(m_window.getSize() / 2);
 	
 	auto* scene = Scene::createInstance();
 	scene->setBackgroundColor({ 1.0f, 0.9f, 0.15f });
@@ -25,11 +25,19 @@ void Application::run()
 
 	while (m_mainLoopCondition)
 	{
-		eventManager->checkForEvents();
-		processInput();
+		timer.stop();
+		float deltaTime = timer.getTimeInSec();
+		if (deltaTime >= (1.0f / 60.0f))
+		{
+			m_window.setTitle("Real-time ray tracing    " + std::to_string(deltaTime) + "    " + std::to_string(static_cast<int>(1.0f / deltaTime)) + " FPS");
 
-		renderer->render();
-		m_window.flush();
+			timer.start();
+			eventManager->checkForEvents();
+			processInput();
+
+			renderer->render();
+			m_window.flush();
+		}
 	}
 }
 

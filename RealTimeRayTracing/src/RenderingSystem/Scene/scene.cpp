@@ -28,7 +28,7 @@ void Scene::render(std::vector<math::Vec3f>& outPixels, const math::Vec2i& resol
 math::Vec3f Scene::calculatePixelColor(const math::Vec2i& pixelCoordinate)
 {
 	math::Ray ray;
-	ray.origin = { static_cast<float>(pixelCoordinate.x()), static_cast<float>(pixelCoordinate.y()), -100.0f };
+	ray.origin = { static_cast<float>(pixelCoordinate.x()), static_cast<float>(pixelCoordinate.y()), -0.0f };
 	ray.direction = { 0.0f, 0.0f, 1.0f };
 
 	math::IntersectionInfo intersection;
