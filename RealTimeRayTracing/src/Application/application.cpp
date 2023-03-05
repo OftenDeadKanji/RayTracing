@@ -18,6 +18,13 @@ Application::Application()
 	eventManager->addWindowListener(this);
 }
 
+Application::~Application()
+{
+	EventManager::deleteInstance();
+	Scene::deleteInstance();
+	Renderer::deleteInstance();
+}
+
 void Application::run()
 {
 	auto* eventManager = EventManager::getInstance();
