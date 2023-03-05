@@ -1,6 +1,6 @@
 ﻿#include <iostream>
 #include "Application/application.hpp"
-#include "math/mathUtils.hpp"
+#include "Math/mathUtils.hpp"
 
 #ifdef _DIST
 #pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
@@ -12,7 +12,14 @@ int main()
 	std::cout << "Hello there!" << std::endl;
 #endif
 	
-	glfwInit();
+	if (!glfwInit())
+	{
+		const char* info;
+		int error = glfwGetError(&info);
+		std::cout << "Error: " << error << '\t' << info << std::endl;
+
+		return 0;
+	}
 	{
 		Application app;
 		app.run();

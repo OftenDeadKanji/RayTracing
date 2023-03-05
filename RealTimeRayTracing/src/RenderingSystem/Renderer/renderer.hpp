@@ -5,7 +5,7 @@
 #include <memory>
 #include "glad/glad.h"
 
-//class Window;
+class Window;
 
 class Renderer
 	: public NonCopyable
@@ -32,7 +32,7 @@ public:
 
 	void initScreenTexture(const math::Vec2i& size);
 
-	void render();
+	void render(const Window& window);
 private:
 	static std::unique_ptr<Renderer> s_instance;
 

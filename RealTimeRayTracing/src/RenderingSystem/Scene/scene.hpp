@@ -36,7 +36,7 @@ public:
 		return s_instance.get();
 	}
 
-	void render(/*Camera& camera, */ std::vector<math::Vec3f>& outPixels, const math::Vec2i& resolution);
+	void render(/*Camera& camera, */ std::vector<math::Vec3f>& outPixels, const math::Vec2i& windowResolution, const math::Vec2i& textureResolution);
 
 	void setBackgroundColor(const math::Vec3f& color)
 	{
@@ -49,7 +49,7 @@ private:
 	
 	std::vector<math::Sphere> m_spheres;
 
-	math::Vec3f calculatePixelColor(const math::Vec2i& pixelCoordinate /*Camera& camera*/);
+	math::Vec3f calculatePixelColor(const math::Vec2i& pixelCoordinate, const math::Vec2i& windowResolution, const math::Vec2i& textureResolution /*Camera& camera*/);
 	void findIntersection(const math::Ray& ray, math::IntersectionInfo& outIntersection, math::Vec3f& outColor);
 };
 

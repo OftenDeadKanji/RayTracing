@@ -1,4 +1,5 @@
 #include "sphere.hpp"
+#include <math.h>
 #include "ray.hpp"
 #include "intersection.hpp"
 
@@ -22,8 +23,8 @@ namespace math
         {
             return false;
         }
-
-        float q = std::sqrtf(r2 - m2);
+        
+        float q = sqrtf(r2 - m2);
         float t = l2 > r2 ? s - q : s + q;
 
         if (t > outIntersection.t)

@@ -35,7 +35,7 @@ void Application::run()
 			eventManager->checkForEvents();
 			processInput();
 
-			renderer->render();
+			renderer->render(m_window);
 			m_window.flush();
 		}
 	}
