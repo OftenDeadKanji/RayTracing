@@ -2,6 +2,7 @@
 #include "../RenderingSystem/Window/window.hpp"
 #include "EventSystem/IWindowListener.hpp"
 #include "../Utils/Timer/timer.hpp"
+#include "../RenderingSystem/Camera/camera.hpp"
 
 class Application
 	: public IWindowListener
@@ -18,5 +19,8 @@ private:
 	
 	Window m_window;
 	Timer timer;
+
+	Camera camera;
+
 	void processInput();
 };

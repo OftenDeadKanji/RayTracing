@@ -2,6 +2,7 @@
 #include "glad/glad.h"
 #include <iostream>
 #include "../Window/window.hpp"
+#include "../Camera/camera.hpp"
 
 std::unique_ptr<Renderer> Renderer::s_instance = nullptr;
 
@@ -119,12 +120,12 @@ void Renderer::initScreenTexture(const math::Vec2i& size)
 	glBindTexture(GL_TEXTURE_2D, m_screenTexture);
 }
 
-void Renderer::render(const Window& window)
+void Renderer::render(const Window& window, const Camera& camera)
 {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 		
-	Scene::getInstance()->render(m_texels, window.getSize(), m_textureSize);
+	Scene::getInstance()->render(camera, m_texels, window.getSize(), m_textureSize);
 
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_textureSize.x(), m_textureSize.y(), GL_RGB, GL_FLOAT, m_texels.data());
 

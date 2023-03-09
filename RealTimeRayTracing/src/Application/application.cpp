@@ -16,6 +16,8 @@ Application::Application()
 
 	auto* eventManager = EventManager::createInstance();
 	eventManager->addWindowListener(this);
+
+	camera.setPerspective(45.0f, static_cast<float>(m_window.getSize().x()) / m_window.getSize().y(), 0.1f, 1000.0f);
 }
 
 Application::~Application()
@@ -42,7 +44,7 @@ void Application::run()
 			eventManager->checkForEvents();
 			processInput();
 
-			renderer->render(m_window);
+			renderer->render(m_window, camera);
 			m_window.flush();
 		}
 	}
@@ -55,4 +57,5 @@ void Application::onWindowClose()
 
 void Application::processInput()
 {
+	camera.update();
 }
