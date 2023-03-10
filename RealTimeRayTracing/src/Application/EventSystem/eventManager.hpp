@@ -40,6 +40,30 @@ public:
 		}
 	}
 
+	void onWindowResize(const math::Vec2i& newSize)
+	{
+		for (auto* listeners : m_windowListeners)
+		{
+			listeners->onWindowResize(newSize);
+		}
+	}
+
+	void onKeyPressed(int key)
+	{
+		for (auto* listeners : m_windowListeners)
+		{
+			listeners->onKeyPressed(key);
+		}
+	}
+
+	void onKeyReleased(int key)
+	{
+		for (auto* listeners : m_windowListeners)
+		{
+			listeners->onKeyReleased(key);
+		}
+	}
+
 	void checkForEvents()
 	{
 		glfwPollEvents();

@@ -23,6 +23,12 @@ public:
 		return m_properties.size;
 	}
 
+	void setSize(const math::Vec2i& size)
+	{
+		m_properties.size = size;
+		glViewport(0, 0, m_properties.size.x(), m_properties.size.y());
+	}
+
 	void setTitle(std::string title)
 	{
 		m_properties.title = std::move(title);

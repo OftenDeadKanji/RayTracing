@@ -3,12 +3,6 @@
 #include <iostream>
 
 #pragma region GLFW Callbacks
-void framebuffer_size_callback(GLFWwindow* window, const int width, const int height)
-{
-	glViewport(0, 0, width, height);
-
-	std::cout << width << '\t' << height << '\n';
-}
 
 void window_close_callback(GLFWwindow* window)
 {
@@ -17,18 +11,21 @@ void window_close_callback(GLFWwindow* window)
 
 void window_resize_callback(GLFWwindow* window, int width, int height)
 {
-	std::cout << width << '\t' << height << '\n';
+	EventManager::getInstance()->onWindowResize(math::Vec2i(width, height));
 }
 
-//void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-//{
-//	auto* userWindow = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
-//	if (userWindow)
-//	{
-//		keyCallback(userWindow, key, scancode, action, mods);
-//	}
-//}
-//
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	if (action == GLFW_PRESS)
+	{
+		EventManager::getInstance()->onKeyPressed(key);
+	}
+	else if (action == GLFW_RELEASE)
+	{
+		EventManager::getInstance()->onKeyReleased(key);
+	}
+}
+
 //void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 //{
 //	auto* userWindow = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
@@ -37,14 +34,10 @@ void window_resize_callback(GLFWwindow* window, int width, int height)
 //		mouseButtonCallback(userWindow, button, action, mods);
 //	}
 //}
-//
+
 //void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 //{
-//	auto* userWindow = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
-//	if (userWindow)
-//	{
-//		cursorPositionCallback(userWindow, xpos, ypos);
-//	}
+//	EventManager::getInstance()->onWindowResize(math::Vec2i(width, height));
 //}
 #pragma endregion
 
@@ -78,8 +71,8 @@ void Window::init(WindowProperties properties)
 	glfwMakeContextCurrent(m_glfwWindow);
 
 	glfwSetWindowCloseCallback(m_glfwWindow, window_close_callback);
-	glfwSetFramebufferSizeCallback(m_glfwWindow, framebuffer_size_callback);
 	glfwSetWindowSizeCallback(m_glfwWindow, window_resize_callback);
+	glfwSetKeyCallback(m_glfwWindow, key_callback);
 
 	if (gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
 	{

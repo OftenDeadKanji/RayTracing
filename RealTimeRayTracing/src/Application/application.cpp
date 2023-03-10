@@ -5,7 +5,7 @@
 Application::Application()
 {
 	m_window.init(WindowProperties(
-		math::Vec2i(1600, 900), WindowMode::Windowed, "Real-time ray tracing", false
+		math::Vec2i(1600, 900), WindowMode::Windowed, "Real-time ray tracing", true
 	));
 
 	auto* renderer = Renderer::createInstance();
@@ -35,10 +35,10 @@ void Application::run()
 	while (m_mainLoopCondition)
 	{
 		timer.stop();
-		float deltaTime = timer.getTimeInSec();
-		if (deltaTime >= (1.0f / 60.0f))
+		m_deltaTime = timer.getTimeInSec();
+		if (m_deltaTime >= (1.0f / 60.0f))
 		{
-			m_window.setTitle("Real-time ray tracing    " + std::to_string(deltaTime) + "    " + std::to_string(static_cast<int>(1.0f / deltaTime)) + " FPS");
+			m_window.setTitle("Real-time ray tracing    " + std::to_string(m_deltaTime) + "    " + std::to_string(static_cast<int>(1.0f / m_deltaTime)) + " FPS");
 
 			timer.start();
 			eventManager->checkForEvents();
@@ -55,7 +55,66 @@ void Application::onWindowClose()
 	m_mainLoopCondition = false;
 }
 
+void Application::onWindowResize(const math::Vec2i& newSize)
+{
+	m_window.setSize(newSize);
+	camera.setPerspective(45.0f, static_cast<float>(m_window.getSize().x()) / m_window.getSize().y(), 0.1f, 1000.0f);
+	Renderer::getInstance()->initScreenTexture(m_window.getSize() / 2);
+}
+
+void Application::onKeyPressed(int key)
+{
+	m_keyStates[key] = true;
+}
+
+void Application::onKeyReleased(int key)
+{
+	m_keyStates[key] = false;
+}
+
 void Application::processInput()
 {
+	processCameraControl();
+}
+
+void Application::processCameraControl()
+{
+	math::Vec3f movement = { 0.0f, 0.0f, 0.0f };
+	
+	if (m_keyStates[GLFW_KEY_W])
+	{
+		movement.z() += m_cameraMovementSpeed;
+	}
+	if (m_keyStates[GLFW_KEY_S])
+	{
+		movement.z() -= m_cameraMovementSpeed;
+	}
+
+	if (m_keyStates[GLFW_KEY_D])
+	{
+		movement.x() += m_cameraMovementSpeed;
+	}
+	if (m_keyStates[GLFW_KEY_A])
+	{
+		movement.x() -= m_cameraMovementSpeed;
+	}
+
+	if (m_keyStates[GLFW_KEY_LEFT_CONTROL])
+	{
+		movement.y() += m_cameraMovementSpeed;
+	}
+	if (m_keyStates[GLFW_KEY_SPACE])
+	{
+		movement.y() -= m_cameraMovementSpeed;
+	}
+
+	if (m_keyStates[GLFW_KEY_LEFT_SHIFT])
+	{
+		movement *= m_cameraMovementSpeedup;
+	}
+
+	movement *= m_deltaTime;
+
+	camera.addLocalPosition(movement);
 	camera.update();
 }
