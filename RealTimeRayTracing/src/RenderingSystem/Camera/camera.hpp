@@ -75,7 +75,7 @@ private:
 	void updateNearPlane();
 };
 
-
+#pragma region Inline methods definitions
 inline math::Vec3f Camera::getPosition() const
 {
 	return m_viewInv.row(3).head<3>();
@@ -163,4 +163,6 @@ inline void Camera::transformClipToWorld(math::Vec4f& v) const
 	v /= v.w();
 
 }
+#pragma endregion
+
 #endif

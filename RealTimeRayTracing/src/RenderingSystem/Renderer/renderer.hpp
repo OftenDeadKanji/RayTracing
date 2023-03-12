@@ -45,4 +45,21 @@ private:
 	GLuint m_shader{};
 };
 
+#pragma region Inline methods definitions
+inline Renderer* Renderer::createInstance()
+{
+	s_instance = std::unique_ptr<Renderer>(new Renderer());
+	return s_instance.get();
+}
+inline void Renderer::deleteInstance()
+{
+	s_instance.release();
+}
+
+inline Renderer* Renderer::getInstance()
+{
+	return s_instance.get();
+}
+#pragma endregion
+
 #endif

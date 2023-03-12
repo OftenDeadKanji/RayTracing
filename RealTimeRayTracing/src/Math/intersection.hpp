@@ -10,15 +10,21 @@ namespace math
 		math::Vec3f point;
 		float t;
 
-		void reset()
-		{
-			t = std::numeric_limits<float>::infinity();
-		}
-
-		bool intersected() const
-		{
-			return t != std::numeric_limits<float>::infinity();
-		}
+		void reset();
+		bool intersected() const;
 	};
+
+#pragma region Inline methods definitions
+	inline void IntersectionInfo::reset()
+	{
+		t = std::numeric_limits<float>::infinity();
+	}
+
+	inline bool IntersectionInfo::intersected() const
+	{
+		return t != std::numeric_limits<float>::infinity();
+	}
+#pragma endregion
 }
+
 #endif

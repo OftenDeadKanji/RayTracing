@@ -1,4 +1,6 @@
-#pragma once
+#ifndef __APPLICATION_HPP__
+#define __APPLICATION_HPP__
+
 #include "../RenderingSystem/Window/window.hpp"
 #include "EventSystem/IWindowListener.hpp"
 #include "../Utils/Timer/timer.hpp"
@@ -48,3 +50,52 @@ private:
 	void processInput();
 	void processCameraControl();
 };
+
+#pragma region Inline methods definitions
+inline void Application::onWindowClose()
+{
+	m_mainLoopCondition = false;
+}
+
+inline void Application::onKeyPressed(int key)
+{
+	m_keyStates[key] = true;
+}
+
+inline void Application::onKeyReleased(int key)
+{
+	m_keyStates[key] = false;
+}
+
+inline void Application::onLeftMouseButtonPressed(const math::Vec2i& position)
+{
+	m_leftMouseButtonState = true;
+	m_mousePositionOnLeftClick = position;;
+}
+
+inline void Application::onLeftMouseButtonReleased(const math::Vec2i& position)
+{
+	m_leftMouseButtonState = false;
+	m_leftMouseButtonHoldPositionDelta = { 0, 0 };
+}
+
+inline void Application::onRightMouseButtonPressed(const math::Vec2i& position)
+{
+	m_rightMouseButtonState = true;
+	m_mousePositionOnRightClick = position;
+}
+
+inline void Application::onRightMouseButtonReleased(const math::Vec2i& position)
+{
+	m_rightMouseButtonState = false;
+	m_rightMouseButtonHoldPositionDelta = { 0, 0 };
+}
+
+inline void Application::processInput()
+{
+	processCameraControl();
+}
+
+#pragma endregion
+
+#endif

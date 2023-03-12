@@ -123,4 +123,3 @@ void Window::centerWindow()
 
 	glfwSetWindowPos(m_glfwWindow, monitorPos.x() + (mode->width - windowSize.x()) / 2, monitorPos.y() + (mode->height - windowSize.y()) / 2);
 }
-

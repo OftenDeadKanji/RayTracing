@@ -50,26 +50,11 @@ void Application::run()
 	}
 }
 
-void Application::onWindowClose()
-{
-	m_mainLoopCondition = false;
-}
-
 void Application::onWindowResize(const math::Vec2i& newSize)
 {
 	m_window.setSize(newSize);
 	camera.setPerspective(45.0f, static_cast<float>(m_window.getSize().x()) / m_window.getSize().y(), 0.1f, 1000.0f);
 	Renderer::getInstance()->initScreenTexture(m_window.getSize() / 2);
-}
-
-void Application::onKeyPressed(int key)
-{
-	m_keyStates[key] = true;
-}
-
-void Application::onKeyReleased(int key)
-{
-	m_keyStates[key] = false;
 }
 
 void Application::onMouseMove(const math::Vec2i& newPos)
@@ -86,35 +71,6 @@ void Application::onMouseMove(const math::Vec2i& newPos)
 	{
 		m_rightMouseButtonHoldPositionDelta = m_mousePosition - m_mousePositionOnRightClick;
 	}
-}
-
-void Application::onLeftMouseButtonPressed(const math::Vec2i& position)
-{
-	m_leftMouseButtonState = true;
-	m_mousePositionOnLeftClick = position;;
-}
-
-void Application::onLeftMouseButtonReleased(const math::Vec2i& position)
-{
-	m_leftMouseButtonState = false;
-	m_leftMouseButtonHoldPositionDelta = { 0, 0 };
-}
-
-void Application::onRightMouseButtonPressed(const math::Vec2i& position)
-{
-	m_rightMouseButtonState = true;
-	m_mousePositionOnRightClick = position;
-}
-
-void Application::onRightMouseButtonReleased(const math::Vec2i& position)
-{
-	m_rightMouseButtonState = false;
-	m_rightMouseButtonHoldPositionDelta = { 0, 0 };
-}
-
-void Application::processInput()
-{
-	processCameraControl();
 }
 
 void Application::processCameraControl()

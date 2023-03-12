@@ -8,7 +8,6 @@ namespace math
 	{
 		math::Vec3f origin;
 		math::Vec3f direction;
-		float t;
 	};
 }
 #endif
