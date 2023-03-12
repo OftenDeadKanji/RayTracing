@@ -72,6 +72,46 @@ void Application::onKeyReleased(int key)
 	m_keyStates[key] = false;
 }
 
+void Application::onMouseMove(const math::Vec2i& newPos)
+{
+	m_mousePreviousPosition = m_mousePosition;
+	m_mousePosition = newPos;
+
+	m_mousePositionDelta = m_mousePosition - m_mousePreviousPosition;
+	if (m_leftMouseButtonState)
+	{
+		m_leftMouseButtonHoldPositionDelta = m_mousePosition - m_mousePositionOnLeftClick;
+	}
+	if (m_rightMouseButtonState)
+	{
+		m_rightMouseButtonHoldPositionDelta = m_mousePosition - m_mousePositionOnRightClick;
+	}
+}
+
+void Application::onLeftMouseButtonPressed()
+{
+	m_leftMouseButtonState = true;
+	m_mousePositionOnLeftClick = m_mousePosition;
+}
+
+void Application::onLeftMouseButtonReleased()
+{
+	m_leftMouseButtonState = false;
+	m_leftMouseButtonHoldPositionDelta = { 0, 0 };
+}
+
+void Application::onRightMouseButtonPressed()
+{
+	m_rightMouseButtonState = true;
+	m_mousePositionOnRightClick = m_mousePosition;
+}
+
+void Application::onRightMouseButtonReleased()
+{
+	m_rightMouseButtonState = false;
+	m_rightMouseButtonHoldPositionDelta = { 0, 0 };
+}
+
 void Application::processInput()
 {
 	processCameraControl();
@@ -79,8 +119,9 @@ void Application::processInput()
 
 void Application::processCameraControl()
 {
-	math::Vec3f movement = { 0.0f, 0.0f, 0.0f };
-	
+	math::Vec3f movement{ 0.0f, 0.0f, 0.0f };
+	math::EulerAngles rotation{ math::Vec3f{0.0f, 0.0f, 0.0f} };
+
 	if (m_keyStates[GLFW_KEY_W])
 	{
 		movement.z() += m_cameraMovementSpeed;
@@ -113,8 +154,16 @@ void Application::processCameraControl()
 		movement *= m_cameraMovementSpeedup;
 	}
 
+	if (m_leftMouseButtonState)
+	{
+		rotation.pitch() -= m_leftMouseButtonHoldPositionDelta.y();
+		rotation.yaw() -= m_leftMouseButtonHoldPositionDelta.x();
+	}
+
 	movement *= m_deltaTime;
+	rotation *= m_cameraRotationSpeed * m_deltaTime;
 
 	camera.addLocalPosition(movement);
+	camera.addLocalRotation(rotation);
 	camera.update();
 }

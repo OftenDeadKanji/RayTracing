@@ -64,6 +64,46 @@ public:
 		}
 	}
 
+	void onMouseMove(const math::Vec2i& newPos)
+	{
+		for (auto* listeners : m_windowListeners)
+		{
+			listeners->onMouseMove(newPos);
+		}
+	}
+
+	void onLeftMouseButtonPressed()
+	{
+		for (auto* listeners : m_windowListeners)
+		{
+			listeners->onLeftMouseButtonPressed();
+		}
+	}
+
+	void onLeftMouseButtonReleased()
+	{
+		for (auto* listeners : m_windowListeners)
+		{
+			listeners->onLeftMouseButtonReleased();
+		}
+	}
+
+	void onRightMouseButtonPressed()
+	{
+		for (auto* listeners : m_windowListeners)
+		{
+			listeners->onRightMouseButtonPressed();
+		}
+	}
+
+	void onRightMouseButtonReleased()
+	{
+		for (auto* listeners : m_windowListeners)
+		{
+			listeners->onRightMouseButtonReleased();
+		}
+	}
+
 	void checkForEvents()
 	{
 		glfwPollEvents();

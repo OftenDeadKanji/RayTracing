@@ -26,19 +26,36 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 }
 
-//void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
-//{
-//	auto* userWindow = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
-//	if (userWindow)
-//	{
-//		mouseButtonCallback(userWindow, button, action, mods);
-//	}
-//}
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+	if (button == GLFW_MOUSE_BUTTON_LEFT)
+	{
+		if (action == GLFW_PRESS)
+		{
+			EventManager::getInstance()->onLeftMouseButtonPressed();
+		}
+		else if (action == GLFW_RELEASE)
+		{
+			EventManager::getInstance()->onLeftMouseButtonReleased();
+		}
+	}
+	else if (button == GLFW_MOUSE_BUTTON_RIGHT)
+	{
+		if (action == GLFW_PRESS)
+		{
+			EventManager::getInstance()->onRightMouseButtonPressed();
+		}
+		else if (action == GLFW_RELEASE)
+		{
+			EventManager::getInstance()->onRightMouseButtonReleased();
+		}
+	}
+}
 
-//void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
-//{
-//	EventManager::getInstance()->onWindowResize(math::Vec2i(width, height));
-//}
+void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	EventManager::getInstance()->onMouseMove(math::Vec2i(xpos, ypos));
+}
 #pragma endregion
 
 Window::~Window()
@@ -73,6 +90,8 @@ void Window::init(WindowProperties properties)
 	glfwSetWindowCloseCallback(m_glfwWindow, window_close_callback);
 	glfwSetWindowSizeCallback(m_glfwWindow, window_resize_callback);
 	glfwSetKeyCallback(m_glfwWindow, key_callback);
+	glfwSetMouseButtonCallback(m_glfwWindow, mouse_button_callback);
+	glfwSetCursorPosCallback(m_glfwWindow, cursor_position_callback);
 
 	if (gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
 	{

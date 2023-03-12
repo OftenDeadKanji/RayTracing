@@ -9,6 +9,11 @@ public:
 	virtual void onWindowResize(const math::Vec2i& newSize) = 0;
 	virtual void onKeyPressed(int key) = 0;
 	virtual void onKeyReleased(int key) = 0;
+	virtual void onMouseMove(const math::Vec2i& newPos) = 0;
+	virtual void onLeftMouseButtonPressed() = 0;
+	virtual void onLeftMouseButtonReleased() = 0;
+	virtual void onRightMouseButtonPressed() = 0;
+	virtual void onRightMouseButtonReleased() = 0;
 };
 
 #endif
