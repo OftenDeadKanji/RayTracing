@@ -18,10 +18,10 @@ public:
 	void onKeyPressed(int key) override;
 	void onKeyReleased(int key) override;
 	void onMouseMove(const math::Vec2i& newPos)override;
-	void onLeftMouseButtonPressed() override;
-	void onLeftMouseButtonReleased() override;
-	void onRightMouseButtonPressed() override;
-	void onRightMouseButtonReleased() override;
+	void onLeftMouseButtonPressed(const math::Vec2i& position) override;
+	void onLeftMouseButtonReleased(const math::Vec2i& position) override;
+	void onRightMouseButtonPressed(const math::Vec2i& position) override;
+	void onRightMouseButtonReleased(const math::Vec2i& position) override;
 private:
 	bool m_mainLoopCondition = true;
 	

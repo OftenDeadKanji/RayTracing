@@ -10,10 +10,10 @@ public:
 	virtual void onKeyPressed(int key) = 0;
 	virtual void onKeyReleased(int key) = 0;
 	virtual void onMouseMove(const math::Vec2i& newPos) = 0;
-	virtual void onLeftMouseButtonPressed() = 0;
-	virtual void onLeftMouseButtonReleased() = 0;
-	virtual void onRightMouseButtonPressed() = 0;
-	virtual void onRightMouseButtonReleased() = 0;
+	virtual void onLeftMouseButtonPressed(const math::Vec2i& position) = 0;
+	virtual void onLeftMouseButtonReleased(const math::Vec2i& position) = 0;
+	virtual void onRightMouseButtonPressed(const math::Vec2i& position) = 0;
+	virtual void onRightMouseButtonReleased(const math::Vec2i& position) = 0;
 };
 
 #endif

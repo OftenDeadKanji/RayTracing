@@ -6,23 +6,23 @@
 
 void window_close_callback(GLFWwindow* window)
 {
-	EventManager::getInstance()->onWindowClose();
+	EventManager::getInstance()->onWindowClose(window);
 }
 
 void window_resize_callback(GLFWwindow* window, int width, int height)
 {
-	EventManager::getInstance()->onWindowResize(math::Vec2i(width, height));
+	EventManager::getInstance()->onWindowResize(window, math::Vec2i(width, height));
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (action == GLFW_PRESS)
 	{
-		EventManager::getInstance()->onKeyPressed(key);
+		EventManager::getInstance()->onKeyPressed(window, key);
 	}
 	else if (action == GLFW_RELEASE)
 	{
-		EventManager::getInstance()->onKeyReleased(key);
+		EventManager::getInstance()->onKeyReleased(window, key);
 	}
 }
 
@@ -32,29 +32,29 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 	{
 		if (action == GLFW_PRESS)
 		{
-			EventManager::getInstance()->onLeftMouseButtonPressed();
+			EventManager::getInstance()->onLeftMouseButtonPressed(window);
 		}
 		else if (action == GLFW_RELEASE)
 		{
-			EventManager::getInstance()->onLeftMouseButtonReleased();
+			EventManager::getInstance()->onLeftMouseButtonReleased(window);
 		}
 	}
 	else if (button == GLFW_MOUSE_BUTTON_RIGHT)
 	{
 		if (action == GLFW_PRESS)
 		{
-			EventManager::getInstance()->onRightMouseButtonPressed();
+			EventManager::getInstance()->onRightMouseButtonPressed(window);
 		}
 		else if (action == GLFW_RELEASE)
 		{
-			EventManager::getInstance()->onRightMouseButtonReleased();
+			EventManager::getInstance()->onRightMouseButtonReleased(window);
 		}
 	}
 }
 
 void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	EventManager::getInstance()->onMouseMove(math::Vec2i(xpos, ypos));
+	EventManager::getInstance()->onMouseMove(window, math::Vec2i(xpos, ypos));
 }
 #pragma endregion
 

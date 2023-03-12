@@ -88,25 +88,25 @@ void Application::onMouseMove(const math::Vec2i& newPos)
 	}
 }
 
-void Application::onLeftMouseButtonPressed()
+void Application::onLeftMouseButtonPressed(const math::Vec2i& position)
 {
 	m_leftMouseButtonState = true;
-	m_mousePositionOnLeftClick = m_mousePosition;
+	m_mousePositionOnLeftClick = position;;
 }
 
-void Application::onLeftMouseButtonReleased()
+void Application::onLeftMouseButtonReleased(const math::Vec2i& position)
 {
 	m_leftMouseButtonState = false;
 	m_leftMouseButtonHoldPositionDelta = { 0, 0 };
 }
 
-void Application::onRightMouseButtonPressed()
+void Application::onRightMouseButtonPressed(const math::Vec2i& position)
 {
 	m_rightMouseButtonState = true;
-	m_mousePositionOnRightClick = m_mousePosition;
+	m_mousePositionOnRightClick = position;
 }
 
-void Application::onRightMouseButtonReleased()
+void Application::onRightMouseButtonReleased(const math::Vec2i& position)
 {
 	m_rightMouseButtonState = false;
 	m_rightMouseButtonHoldPositionDelta = { 0, 0 };

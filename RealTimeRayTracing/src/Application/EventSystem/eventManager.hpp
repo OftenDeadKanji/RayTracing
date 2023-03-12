@@ -32,7 +32,7 @@ public:
 		m_windowListeners.push_back(listener);
 	}
 
-	void onWindowClose()
+	void onWindowClose(GLFWwindow* window)
 	{
 		for (auto* listeners : m_windowListeners)
 		{
@@ -40,7 +40,7 @@ public:
 		}
 	}
 
-	void onWindowResize(const math::Vec2i& newSize)
+	void onWindowResize(GLFWwindow* window, const math::Vec2i& newSize)
 	{
 		for (auto* listeners : m_windowListeners)
 		{
@@ -48,7 +48,7 @@ public:
 		}
 	}
 
-	void onKeyPressed(int key)
+	void onKeyPressed(GLFWwindow* window, int key)
 	{
 		for (auto* listeners : m_windowListeners)
 		{
@@ -56,7 +56,7 @@ public:
 		}
 	}
 
-	void onKeyReleased(int key)
+	void onKeyReleased(GLFWwindow* window, int key)
 	{
 		for (auto* listeners : m_windowListeners)
 		{
@@ -64,7 +64,7 @@ public:
 		}
 	}
 
-	void onMouseMove(const math::Vec2i& newPos)
+	void onMouseMove(GLFWwindow* window, const math::Vec2i& newPos)
 	{
 		for (auto* listeners : m_windowListeners)
 		{
@@ -72,35 +72,47 @@ public:
 		}
 	}
 
-	void onLeftMouseButtonPressed()
+	void onLeftMouseButtonPressed(GLFWwindow* window)
 	{
+		double x, y;
+		glfwGetCursorPos(window, &x, &y);
+
 		for (auto* listeners : m_windowListeners)
 		{
-			listeners->onLeftMouseButtonPressed();
+			listeners->onLeftMouseButtonPressed(math::Vec2i(x, y));
 		}
 	}
 
-	void onLeftMouseButtonReleased()
+	void onLeftMouseButtonReleased(GLFWwindow* window)
 	{
+		double x, y;
+		glfwGetCursorPos(window, &x, &y);
+
 		for (auto* listeners : m_windowListeners)
 		{
-			listeners->onLeftMouseButtonReleased();
+			listeners->onLeftMouseButtonReleased(math::Vec2i(x, y));
 		}
 	}
 
-	void onRightMouseButtonPressed()
+	void onRightMouseButtonPressed(GLFWwindow* window)
 	{
+		double x, y;
+		glfwGetCursorPos(window, &x, &y);
+
 		for (auto* listeners : m_windowListeners)
 		{
-			listeners->onRightMouseButtonPressed();
+			listeners->onRightMouseButtonPressed(math::Vec2i(x, y));
 		}
 	}
 
-	void onRightMouseButtonReleased()
+	void onRightMouseButtonReleased(GLFWwindow* window)
 	{
+		double x, y;
+		glfwGetCursorPos(window, &x, &y);
+
 		for (auto* listeners : m_windowListeners)
 		{
-			listeners->onRightMouseButtonReleased();
+			listeners->onRightMouseButtonReleased(math::Vec2i(x, y));
 		}
 	}
 
