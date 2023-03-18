@@ -5,14 +5,14 @@
 namespace math
 {
 	struct Ray;
-	struct IntersectionInfo;
+	struct Intersection;
 
 	struct Sphere
 	{
 		math::Vec3f position;
 		float radius;
 
-		bool isIntersecting(const Ray& ray, IntersectionInfo& outIntersection) const;
+		bool isIntersecting(const Ray& ray, Intersection& outIntersection) const;
 	};
 }
 

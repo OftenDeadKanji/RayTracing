@@ -3,17 +3,13 @@
 #include "../../Math/mathUtils.hpp"
 #include "../../Utils/nonCopyable.hpp"
 #include <memory>
-#include "../../Math/sphere.hpp"
-
-namespace math
-{
-	struct Ray;
-	struct Plane;
-	struct IntersectionInfo;
-}
+#include "SceneObjects/sphereObject.hpp"
+#include "../Lighting/directionalLight.hpp"
 
 class Window;
 class Camera;
+
+struct IntersectionInfo;
 
 class Scene
 	: public NonCopyable
@@ -34,12 +30,14 @@ private:
 
 	math::Vec3f m_backgroundColor;
 	
-	std::vector<math::Sphere> m_spheres;
+	//objects
+	std::vector<SphereObject> m_spheres;
 
-	int maxBouncesCount = 50;
+	//lights
+	std::vector<DirectionalLight> m_directionalLights;
 
 	math::Vec3f calculatePixelColor(const Camera& camera, const math::Vec2i& pixelCoordinate, const math::Vec2i& windowResolution, const math::Vec2i& textureResolution /*Camera& camera*/);
-	void findIntersection(const math::Ray& ray, math::IntersectionInfo& outIntersection, math::Vec3f& outColor, int bounce);
+	void findIntersection(const math::Ray& ray, IntersectionInfo& outIntersection, math::Vec3f& outColor);
 };
 
 #pragma region Inline methods definitions

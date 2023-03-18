@@ -16,20 +16,10 @@ private:
 public:
 	~Renderer();
 
-	static Renderer* createInstance()
-	{
-		s_instance = std::unique_ptr<Renderer>(new Renderer());
-		return s_instance.get();
-	}
-	static void deleteInstance()
-	{
-		s_instance.release();
-	}
+	static Renderer* createInstance();
+	static void deleteInstance();
 
-	static Renderer* getInstance()
-	{
-		return s_instance.get();
-	}
+	static Renderer* getInstance();
 
 	void initScreenTexture(const math::Vec2i& size);
 

@@ -4,3 +4,6 @@ target_sources(RTRT
 	PRIVATE
 	"scene.cpp"
 )
+
+add_subdirectory("SceneObjects")
+add_subdirectory("IntersectionInfo")

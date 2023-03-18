@@ -8,6 +8,14 @@ namespace math
 	{
 		math::Vec3f origin;
 		math::Vec3f direction;
+
+		Ray reflected(const math::Vec3f& normal) const
+		{
+			Ray out = *this;
+			out.direction = direction - 2.0f * direction.dot(normal) * normal;
+
+			return out;
+		}
 	};
 }
 #endif

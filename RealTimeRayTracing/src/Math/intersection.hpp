@@ -5,22 +5,23 @@
 
 namespace math
 {
-	struct IntersectionInfo
+	struct Intersection
 	{
 		math::Vec3f point;
+		math::Vec3f normal;
 		float t;
 
 		void reset();
-		bool intersected() const;
+		bool occured() const;
 	};
 
 #pragma region Inline methods definitions
-	inline void IntersectionInfo::reset()
+	inline void Intersection::reset()
 	{
 		t = std::numeric_limits<float>::infinity();
 	}
 
-	inline bool IntersectionInfo::intersected() const
+	inline bool Intersection::occured() const
 	{
 		return t != std::numeric_limits<float>::infinity();
 	}

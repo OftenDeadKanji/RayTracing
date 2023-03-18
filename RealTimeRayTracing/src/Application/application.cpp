@@ -9,7 +9,7 @@ Application::Application()
 	));
 
 	auto* renderer = Renderer::createInstance();
-	renderer->initScreenTexture(m_window.getSize() / 2);
+	renderer->initScreenTexture(m_window.getSize());
 	
 	auto* scene = Scene::createInstance();
 	scene->setBackgroundColor({ 1.0f, 0.9f, 0.15f });
@@ -98,11 +98,11 @@ void Application::processCameraControl()
 
 	if (m_keyStates[GLFW_KEY_LEFT_CONTROL])
 	{
-		movement.y() += m_cameraMovementSpeed;
+		movement.y() -= m_cameraMovementSpeed;
 	}
 	if (m_keyStates[GLFW_KEY_SPACE])
 	{
-		movement.y() -= m_cameraMovementSpeed;
+		movement.y() += m_cameraMovementSpeed;
 	}
 
 	if (m_keyStates[GLFW_KEY_LEFT_SHIFT])

@@ -34,13 +34,13 @@ private:
 
 	bool m_keyStates[GLFW_KEY_LAST + 1]{};
 
-	math::Vec2i m_mousePosition{};
-	math::Vec2i m_mousePreviousPosition{};
-	math::Vec2i m_mousePositionDelta{}; // mouse position difference since last frame
+	math::Vec2i m_mousePosition = { 0, 0 };
+	math::Vec2i m_mousePreviousPosition = { 0, 0 };
+	math::Vec2i m_mousePositionDelta = { 0, 0 }; // mouse position difference since last frame
 
 	bool m_leftMouseButtonState{}, m_rightMouseButtonState{};
-	math::Vec2i m_mousePositionOnLeftClick{}, m_mousePositionOnRightClick{};
-	math::Vec2i m_leftMouseButtonHoldPositionDelta{}, m_rightMouseButtonHoldPositionDelta{}; // mouse position difference since LMB/RMB was clicked
+	math::Vec2i m_mousePositionOnLeftClick = { 0, 0 }, m_mousePositionOnRightClick = { 0, 0 };
+	math::Vec2i m_leftMouseButtonHoldPositionDelta = { 0, 0 }, m_rightMouseButtonHoldPositionDelta = { 0, 0 }; // mouse position difference since LMB/RMB was clicked
 
 	Camera camera;
 	float m_cameraMovementSpeed = 10.0f;

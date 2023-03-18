@@ -5,7 +5,7 @@
 
 namespace math
 {
-	bool Sphere::isIntersecting(const Ray& ray, IntersectionInfo& outIntersection) const
+	bool Sphere::isIntersecting(const Ray& ray, Intersection& outIntersection) const
 	{
         //optimized version, source - Real Time Rendering (4th edition)
         math::Vec3f l = position - ray.origin;
@@ -34,6 +34,7 @@ namespace math
 
         outIntersection.t = t;
         outIntersection.point = ray.origin + t * ray.direction;
+        outIntersection.normal = (outIntersection.point - position).normalized();
 
         return true;
 
