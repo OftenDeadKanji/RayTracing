@@ -4,6 +4,7 @@
 #include "../../Utils/nonCopyable.hpp"
 #include <memory>
 #include "SceneObjects/sphereObject.hpp"
+#include "SceneObjects/meshObject.hpp"
 #include "../Lighting/directionalLight.hpp"
 
 class Window;
@@ -32,12 +33,13 @@ private:
 	
 	//objects
 	std::vector<SphereObject> m_spheres;
+	std::vector<MeshObject> m_meshes;
 
 	//lights
 	std::vector<DirectionalLight> m_directionalLights;
 
 	math::Vec3f calculatePixelColor(const Camera& camera, const math::Vec2i& pixelCoordinate, const math::Vec2i& windowResolution, const math::Vec2i& textureResolution /*Camera& camera*/);
-	void findIntersection(const math::Ray& ray, IntersectionInfo& outIntersection, math::Vec3f& outColor);
+	void findIntersection(const math::Ray& ray, IntersectionInfo& outIntersection);
 };
 
 #pragma region Inline methods definitions

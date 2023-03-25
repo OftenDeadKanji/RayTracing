@@ -5,7 +5,8 @@ enum class IntersectionType
 {
 	None,
 
-	Sphere
+	Sphere,
+	Mesh
 };
 
 #endif

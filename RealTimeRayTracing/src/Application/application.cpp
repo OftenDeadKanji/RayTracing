@@ -1,6 +1,7 @@
 #include "application.hpp"
 #include "EventSystem/eventManager.hpp"
 #include "../RenderingSystem/Renderer/renderer.hpp"
+#include "../ResourceManagers/meshManager.hpp"
 
 Application::Application()
 {
@@ -9,13 +10,16 @@ Application::Application()
 	));
 
 	auto* renderer = Renderer::createInstance();
-	renderer->initScreenTexture(m_window.getSize());
+	renderer->initScreenTexture(m_window.getSize() / 2);
 	
-	auto* scene = Scene::createInstance();
-	scene->setBackgroundColor({ 1.0f, 0.9f, 0.15f });
-
+	auto* meshManager = MeshManager::createInstance();
+	meshManager->init();
+	
 	auto* eventManager = EventManager::createInstance();
 	eventManager->addWindowListener(this);
+
+	auto* scene = Scene::createInstance();
+	scene->setBackgroundColor({ 1.0f, 0.9f, 0.15f });
 
 	camera.setPerspective(45.0f, static_cast<float>(m_window.getSize().x()) / m_window.getSize().y(), 0.1f, 1000.0f);
 }
@@ -120,6 +124,7 @@ void Application::processCameraControl()
 	rotation *= m_cameraRotationSpeed * m_deltaTime;
 
 	camera.addLocalPosition(movement);
-	camera.addLocalRotation(rotation);
+	camera.addLocalRotation(math::EulerAngles({ rotation.pitch(), 0.0f, 0.0f }));
+	camera.addWorldRotation(math::EulerAngles({0.0f, rotation.yaw(), 0.0f}));
 	camera.update();
 }

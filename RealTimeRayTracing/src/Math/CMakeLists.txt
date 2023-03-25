@@ -4,7 +4,7 @@ target_sources(RTRT
 	"ray.hpp"
 	"sphere.hpp"
 	"intersection.hpp"
-
+	"transform.hpp"
 	PRIVATE
 	"sphere.cpp"
 )

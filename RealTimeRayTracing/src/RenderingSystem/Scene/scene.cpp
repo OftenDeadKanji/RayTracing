@@ -4,6 +4,7 @@
 #include "../Camera/camera.hpp"
 #include "IntersectionInfo/intersectionInfo.hpp"
 #include "../Lighting/blinnPhong.hpp"
+#include "../../ResourceManagers/meshManager.hpp"
 
 std::unique_ptr<Scene> Scene::s_instance = nullptr;
 
@@ -20,9 +21,17 @@ Scene::Scene()
 
 	m_spheres.push_back(sphere);
 
+	MeshObject mesh;
+	mesh.setMesh(MeshManager::getInstance()->getUnitCube());
+	mesh.m_material.color = { 0.0f, 1.0f, 0.0f };
+	mesh.m_material.shininess = 64.0f;
+	mesh.m_transform = math::Transform({ 0.0f, 0.0f, 50.0f }, math::Quat::Identity(), { 10.0f, 10.0f, 10.0f });
+
+	m_meshes.push_back(mesh);
+
 	DirectionalLight dirLight;
 	dirLight.color = { 1.0f, 1.0f, 1.0f };
-	dirLight.direction = { 1.0f, -1.0f, 1.0f };
+	dirLight.direction = { 0.0f, -1.0f, 0.0f };
 
 	m_directionalLights.push_back(dirLight);
 }
@@ -49,7 +58,7 @@ math::Vec3f Scene::calculatePixelColor(const Camera& camera, const math::Vec2i& 
 	intersection.reset();
 	math::Vec3f color;
 
-	findIntersection(ray, intersection, color);
+	findIntersection(ray, intersection);
 	if (intersection.occured())
 	{
 		math::Vec3f resultColor = { 0.0f, 0.0f, 0.0f };
@@ -66,13 +75,19 @@ math::Vec3f Scene::calculatePixelColor(const Camera& camera, const math::Vec2i& 
 	return m_backgroundColor;
 }
 
-void Scene::findIntersection(const math::Ray& ray, IntersectionInfo& outIntersection, math::Vec3f& outColor)
+void Scene::findIntersection(const math::Ray& ray, IntersectionInfo& outIntersection)
 {
 	for (auto& sphere : m_spheres)
 	{
-		if (sphere.isIntersecting(ray, outIntersection))
-		{
-			outColor = sphere.m_material.color;
-		}
+		sphere.isIntersecting(ray, outIntersection);
+	}
+	for (auto& mesh : m_meshes)
+	{
+		math::Ray rayInMS (ray);
+
+		mesh.m_transform.globalToLocal(rayInMS.origin, 1.0f);
+		mesh.m_transform.globalToLocal(rayInMS.direction, 0.0f);
+
+		mesh.isIntersecting(rayInMS, outIntersection);
 	}
 }

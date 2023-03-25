@@ -3,6 +3,7 @@
 #include "../../Math/ray.hpp"
 #include "directionalLight.hpp"
 #include "../Scene/SceneObjects/sphereObject.hpp"
+#include "../Scene/SceneObjects/meshObject.hpp"
 
 math::Vec3f BlinnPhong::calculateLighting(const DirectionalLight& light, const IntersectionInfo& intersectionInfo, const math::Ray& incidentRay)
 {
@@ -24,6 +25,17 @@ math::Vec3f BlinnPhong::calculateLighting(const DirectionalLight& light, const I
 		shininess = mat.shininess;
 	}
 		break;
+	case IntersectionType::Mesh:
+	{
+		MeshObject* mesh = static_cast<MeshObject*>(intersectionInfo.intersectedObject);
+
+		const Material& mat = mesh->getMaterial();
+
+		albedo = mat.color;
+		shininess = mat.shininess;
+
+		break;
+	}
 	case IntersectionType::None:
 		[[fallthrough]];
 	default:
