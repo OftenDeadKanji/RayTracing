@@ -10,13 +10,19 @@ namespace math
 	struct Ray;
 }
 
+struct Material;
+
 class BlinnPhong
 {
 public:
-	math::Vec3f calculateLighting(const DirectionalLight& light, const IntersectionInfo& intersectionInfo, const math::Ray& incidentRay);
+	math::Vec3f calculateLighting(const DirectionalLight& light, const math::Vec3f& surfacePoint, const math::Vec3f& surfaceNormal, const math::Vec3f& viewDirection, const Material& material);
 
 private:
-	math::Vec3f calculateLighting(const math::Vec3f& lightDirection, const math::Vec3f& viewDirection, const math::Vec3f& normal, const math::Vec3f& albedo, float shininess);
+	math::Vec3f calculateLighting(const math::Vec3f& lightDirection, const math::Vec3f& viewDirection, const math::Vec3f& normal, const Material& material);
 };
+
+#pragma region Inline mathods definitions
+
+#pragma endregion
 
 #endif

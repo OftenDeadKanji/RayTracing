@@ -20,6 +20,7 @@ Application::Application()
 
 	auto* scene = Scene::createInstance();
 	scene->setBackgroundColor({ 1.0f, 0.9f, 0.15f });
+	scene->setAmbientLight({ 0.15f, 0.15f, 0.15f });
 
 	camera.setPerspective(45.0f, static_cast<float>(m_window.getSize().x()) / m_window.getSize().y(), 0.1f, 1000.0f);
 }

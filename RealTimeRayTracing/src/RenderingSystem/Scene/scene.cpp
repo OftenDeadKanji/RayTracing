@@ -61,12 +61,33 @@ math::Vec3f Scene::calculatePixelColor(const Camera& camera, const math::Vec2i& 
 	findIntersection(ray, intersection);
 	if (intersection.occured())
 	{
-		math::Vec3f resultColor = { 0.0f, 0.0f, 0.0f };
+		Material material;
+		switch (intersection.type)
+		{
+		case IntersectionType::Sphere:
+		{
+			SphereObject* sphere = static_cast<SphereObject*>(intersection.intersectedObject);
+			material = sphere->getMaterial();
+		}
+		break;
+		case IntersectionType::Mesh:
+		{
+			MeshObject* mesh = static_cast<MeshObject*>(intersection.intersectedObject);
+			material = mesh->getMaterial();
+		}
+		break;
+		case IntersectionType::None:
+			[[fallthrough]];
+		default:
+			assert(0);
+		}
+
+		math::Vec3f resultColor = m_ambientLight.cwiseProduct(material.color);
 		BlinnPhong blinnPhong;
 
 		for (auto& dirLight : m_directionalLights)
 		{
-			resultColor += blinnPhong.calculateLighting(dirLight, intersection, ray);
+			resultColor += blinnPhong.calculateLighting(dirLight, intersection.intersection.point, intersection.intersection.normal, -ray.direction, material);
 		}
 
 		return resultColor;

@@ -26,6 +26,7 @@ public:
 	void render(const Camera& camera, std::vector<math::Vec3f>& outPixels, const math::Vec2i& windowResolution, const math::Vec2i& textureResolution);
 
 	void setBackgroundColor(const math::Vec3f& color);
+	void setAmbientLight(const math::Vec3f& ambientLight);
 private:
 	static std::unique_ptr<Scene> s_instance;
 
@@ -36,6 +37,7 @@ private:
 	std::vector<MeshObject> m_meshes;
 
 	//lights
+	math::Vec3f m_ambientLight;
 	std::vector<DirectionalLight> m_directionalLights;
 
 	math::Vec3f calculatePixelColor(const Camera& camera, const math::Vec2i& pixelCoordinate, const math::Vec2i& windowResolution, const math::Vec2i& textureResolution /*Camera& camera*/);
@@ -61,6 +63,11 @@ inline Scene* Scene::getInstance()
 inline void Scene::setBackgroundColor(const math::Vec3f& color)
 {
 	m_backgroundColor = color;
+}
+
+inline void Scene::setAmbientLight(const math::Vec3f& ambientLight)
+{
+	m_ambientLight = ambientLight;
 }
 #pragma endregion
 
