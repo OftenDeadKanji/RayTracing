@@ -2,6 +2,7 @@
 #include "EventSystem/eventManager.hpp"
 #include "../RenderingSystem/Renderer/renderer.hpp"
 #include "../ResourceManagers/meshManager.hpp"
+#include <thread>
 
 Application::Application()
 {
@@ -20,7 +21,7 @@ Application::Application()
 
 	auto* scene = Scene::createInstance();
 	scene->setBackgroundColor({ 1.0f, 0.9f, 0.15f });
-	scene->setAmbientLight({ 0.15f, 0.15f, 0.15f });
+	scene->setAmbientLight({ 0.05f, 0.05f, 0.05f });
 
 	camera.setPerspective(45.0f, static_cast<float>(m_window.getSize().x()) / m_window.getSize().y(), 0.1f, 1000.0f);
 }
@@ -52,6 +53,8 @@ void Application::run()
 			renderer->render(m_window, camera);
 			m_window.flush();
 		}
+
+		std::this_thread::yield();
 	}
 }
 

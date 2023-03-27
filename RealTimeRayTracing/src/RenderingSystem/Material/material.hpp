@@ -6,6 +6,7 @@ struct Material
 {
 	math::Vec3f color;
 	float shininess;
+	bool isEmmisive;
 };
 
 #endif

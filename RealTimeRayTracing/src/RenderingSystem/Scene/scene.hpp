@@ -6,6 +6,7 @@
 #include "SceneObjects/sphereObject.hpp"
 #include "SceneObjects/meshObject.hpp"
 #include "../Lighting/directionalLight.hpp"
+#include "../Lighting/pointLight.hpp"
 
 class Window;
 class Camera;
@@ -39,6 +40,7 @@ private:
 	//lights
 	math::Vec3f m_ambientLight;
 	std::vector<DirectionalLight> m_directionalLights;
+	std::vector<PointLight> m_pointLights;
 
 	math::Vec3f calculatePixelColor(const Camera& camera, const math::Vec2i& pixelCoordinate, const math::Vec2i& windowResolution, const math::Vec2i& textureResolution /*Camera& camera*/);
 	void findIntersection(const math::Ray& ray, IntersectionInfo& outIntersection);
