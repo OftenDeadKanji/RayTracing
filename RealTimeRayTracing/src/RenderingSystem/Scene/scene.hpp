@@ -7,6 +7,7 @@
 #include "SceneObjects/meshObject.hpp"
 #include "../Lighting/directionalLight.hpp"
 #include "../Lighting/pointLight.hpp"
+#include "../../Utils/ThreadPool/threadPool.hpp"
 
 class Window;
 class Camera;
@@ -30,6 +31,7 @@ public:
 	void setAmbientLight(const math::Vec3f& ambientLight);
 private:
 	static std::unique_ptr<Scene> s_instance;
+	ThreadPool m_threadPool;
 
 	math::Vec3f m_backgroundColor;
 	
@@ -42,7 +44,8 @@ private:
 	std::vector<DirectionalLight> m_directionalLights;
 	std::vector<PointLight> m_pointLights;
 
-	math::Vec3f calculatePixelColor(const Camera& camera, const math::Vec2i& pixelCoordinate, const math::Vec2i& windowResolution, const math::Vec2i& textureResolution /*Camera& camera*/);
+	void task(std::vector<math::Vec3f>& outPixels, const Camera& camera, int startRow, int endRow, const math::Vec2i& windowResolution, const math::Vec2i& textureResolution);
+	void calculatePixelColor(math::Vec3f& outColor, const Camera& camera, const math::Vec2i& pixelCoordinate, const math::Vec2i& windowResolution, const math::Vec2i& textureResolution);
 	void findIntersection(const math::Ray& ray, IntersectionInfo& outIntersection);
 };
 

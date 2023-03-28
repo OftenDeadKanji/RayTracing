@@ -43,9 +43,9 @@ private:
 	math::Vec2i m_leftMouseButtonHoldPositionDelta = { 0, 0 }, m_rightMouseButtonHoldPositionDelta = { 0, 0 }; // mouse position difference since LMB/RMB was clicked
 
 	Camera camera;
-	float m_cameraMovementSpeed = 10.0f;
+	float m_cameraMovementSpeed = 20.0f;
 	float m_cameraMovementSpeedup = 10.0f;
-	float m_cameraRotationSpeed = 0.001f;
+	float m_cameraRotationSpeed = 0.0025f;
 
 	void processInput();
 	void processCameraControl();

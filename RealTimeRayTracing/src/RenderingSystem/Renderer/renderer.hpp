@@ -29,6 +29,7 @@ private:
 
 	math::Vec2i m_textureSize;
 	std::vector<math::Vec3f> m_texels;
+	std::vector<math::Vec3f> m_texels2;
 	GLuint m_screenTexture{};
 	GLuint m_vao;
 

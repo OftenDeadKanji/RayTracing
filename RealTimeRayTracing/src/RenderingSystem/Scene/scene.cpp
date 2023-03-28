@@ -28,7 +28,7 @@ Scene::Scene()
 	mesh.m_material.color = { 0.0f, 1.0f, 0.0f };
 	mesh.m_material.shininess = 64.0f;
 	mesh.m_material.isEmmisive = false;
-	mesh.m_transform = math::Transform({ 0.0f, 0.0f, 50.0f }, math::Quat::Identity(), { 10.0f, 10.0f, 10.0f });
+	mesh.m_transform = math::Transform({ 0.0f, -10.0f, 50.0f }, math::Quat::Identity(), { 10.0f, 10.0f, 10.0f });
 
 	m_meshes.push_back(mesh);
 
@@ -56,23 +56,39 @@ Scene::Scene()
 
 	spherePL.m_sphere.position = { 0.0f, 11.0f, 50.0f };
 	m_spheres.push_back(spherePL);
+
+	m_threadPool.start();
 }
 
 void Scene::render(const Camera& camera, std::vector<math::Vec3f>& outPixels, const math::Vec2i& windowResolution, const math::Vec2i& textureResolution)
 {
-	for (int i = 0; i < textureResolution.x(); i++)
+	const int rowsPerTask = 50;
+
+	for (int startRow = 0; startRow < textureResolution.x(); startRow += rowsPerTask)
+	{
+		int endRow = std::min(startRow + rowsPerTask, windowResolution.x());
+
+		m_threadPool.queueTask([&outPixels, &textureResolution, &camera, &windowResolution, startRow, endRow, this]()
+			{
+				task(outPixels, camera, startRow, endRow, windowResolution, textureResolution);
+			});
+	}
+
+	m_threadPool.waitToFinish();
+}
+
+void Scene::task(std::vector<math::Vec3f>& outPixels, const Camera& camera, int startRow, int endRow, const math::Vec2i& windowResolution, const math::Vec2i& textureResolution)
+{
+	for (int i = startRow; i < endRow; i++)
 	{
 		for (int j = 0; j < textureResolution.y(); j++)
 		{
-			float x = (static_cast<float>(i) / textureResolution.x()) * windowResolution.x();
-			float y = (static_cast<float>(j) / textureResolution.y()) * windowResolution.y();
-
-			outPixels[i + j * textureResolution.x()] = calculatePixelColor(camera, { i, j }, windowResolution, textureResolution);
+			calculatePixelColor(outPixels[i + j * textureResolution.x()], camera, { i, j }, windowResolution, textureResolution);
 		}
 	}
 }
 
-math::Vec3f Scene::calculatePixelColor(const Camera& camera, const math::Vec2i& pixelCoordinate, const math::Vec2i& windowResolution, const math::Vec2i& textureResolution)
+void Scene::calculatePixelColor(math::Vec3f& outColor, const Camera& camera, const math::Vec2i& pixelCoordinate, const math::Vec2i& windowResolution, const math::Vec2i& textureResolution)
 {
 	math::Ray ray = camera.generateRay(pixelCoordinate, textureResolution);
 
@@ -106,7 +122,9 @@ math::Vec3f Scene::calculatePixelColor(const Camera& camera, const math::Vec2i& 
 
 		if (material.isEmmisive)
 		{
-			return material.color.normalized();
+			outColor = material.color.normalized();
+
+			return;
 		}
 
 		math::Vec3f resultColor = m_ambientLight.cwiseProduct(material.color);
@@ -122,10 +140,11 @@ math::Vec3f Scene::calculatePixelColor(const Camera& camera, const math::Vec2i& 
 			resultColor += blinnPhong.calculateLighting(pointLight, intersection.intersection.point, intersection.intersection.normal, -ray.direction, material);
 		}
 
-		return resultColor;
+		outColor = resultColor;
+		return;
 	}
 
-	return m_ambientLight;
+	outColor = m_backgroundColor;
 }
 
 void Scene::findIntersection(const math::Ray& ray, IntersectionInfo& outIntersection)

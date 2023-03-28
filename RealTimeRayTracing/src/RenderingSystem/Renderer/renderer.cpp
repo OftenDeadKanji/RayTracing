@@ -118,6 +118,11 @@ void Renderer::initScreenTexture(const math::Vec2i& size)
 	
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_textureSize.x(), m_textureSize.y(), 0, GL_RGB, GL_FLOAT, nullptr);
 	glBindTexture(GL_TEXTURE_2D, m_screenTexture);
+
+	for (auto& vec : m_texels)
+	{
+		vec = { 1.0f, 0.8f, 0.9f };
+	}
 }
 
 void Renderer::render(const Window& window, const Camera& camera)
@@ -127,7 +132,13 @@ void Renderer::render(const Window& window, const Camera& camera)
 		
 	Scene::getInstance()->render(camera, m_texels, window.getSize(), m_textureSize);
 
+	//for (auto& vec : m_texels)
+	//{
+	//	std::cout << vec << std::endl;
+	//}
+
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_textureSize.x(), m_textureSize.y(), GL_RGB, GL_FLOAT, m_texels.data());
 
 	glDrawArrays(GL_TRIANGLES, 0, 3);
+
 }

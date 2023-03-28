@@ -87,6 +87,8 @@ void Window::init(WindowProperties properties)
 
 	glfwMakeContextCurrent(m_glfwWindow);
 
+	//glfwSwapInterval(1);
+
 	glfwSetWindowCloseCallback(m_glfwWindow, window_close_callback);
 	glfwSetWindowSizeCallback(m_glfwWindow, window_resize_callback);
 	glfwSetKeyCallback(m_glfwWindow, key_callback);
