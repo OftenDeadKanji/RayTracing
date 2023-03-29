@@ -39,17 +39,6 @@ void ThreadPool::stop()
 	m_threads.clear();
 }
 
-//bool ThreadPool::working()
-//{
-//	bool working;
-//	{
-//		std::unique_lock<std::mutex> lock(m_mutexQueue);
-//		working = !m_tasks.empty();
-//	}
-//
-//	return working;
-//}
-
 void ThreadPool::waitToFinish()
 {
 	std::unique_lock<std::mutex> lock(m_mutexIdleThread);

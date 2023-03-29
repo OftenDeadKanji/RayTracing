@@ -13,7 +13,7 @@ class MeshManager
 public:
 	static MeshManager* createInstance();
 	static MeshManager* getInstance();
-	void deleteInstance();
+	static void deleteInstance();
 
 	void init();
 	void deinit();
@@ -47,7 +47,7 @@ inline MeshManager* MeshManager::getInstance()
 
 inline void MeshManager::deleteInstance()
 {
-	deinit();
+	s_instance->deinit();
 	s_instance.release();
 }
 

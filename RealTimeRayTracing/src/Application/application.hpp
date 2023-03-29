@@ -5,6 +5,7 @@
 #include "EventSystem/IWindowListener.hpp"
 #include "../Utils/Timer/timer.hpp"
 #include "../RenderingSystem/Camera/camera.hpp"
+#include "../RenderingSystem/Scene/scene.hpp"
 
 class Application
 	: public IWindowListener
@@ -47,8 +48,12 @@ private:
 	float m_cameraMovementSpeedup = 10.0f;
 	float m_cameraRotationSpeed = 0.0025f;
 
+	Scene m_scene;
+
 	void processInput();
 	void processCameraControl();
+
+	void setupScene();
 };
 
 #pragma region Inline methods definitions

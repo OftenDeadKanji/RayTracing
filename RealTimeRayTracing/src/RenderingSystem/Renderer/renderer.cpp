@@ -3,6 +3,7 @@
 #include <iostream>
 #include "../Window/window.hpp"
 #include "../Camera/camera.hpp"
+#include "../Scene/scene.hpp"
 
 std::unique_ptr<Renderer> Renderer::s_instance = nullptr;
 
@@ -129,16 +130,13 @@ void Renderer::render(const Window& window, const Camera& camera)
 {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
-		
-	Scene::getInstance()->render(camera, m_texels, window.getSize(), m_textureSize);
 
-	//for (auto& vec : m_texels)
-	//{
-	//	std::cout << vec << std::endl;
-	//}
+	if (m_sceneToRender)
+	{
+		m_sceneToRender->render(camera, m_texels, window.getSize(), m_textureSize);
+	}
 
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_textureSize.x(), m_textureSize.y(), GL_RGB, GL_FLOAT, m_texels.data());
 
 	glDrawArrays(GL_TRIANGLES, 0, 3);
-
 }

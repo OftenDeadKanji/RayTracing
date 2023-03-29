@@ -13,23 +13,24 @@ Application::Application()
 	auto* renderer = Renderer::createInstance();
 	renderer->initScreenTexture(m_window.getSize() / 2);
 	
+	renderer->setSceneToRender(&m_scene);
+
 	auto* meshManager = MeshManager::createInstance();
 	meshManager->init();
 	
 	auto* eventManager = EventManager::createInstance();
 	eventManager->addWindowListener(this);
 
-	auto* scene = Scene::createInstance();
-	scene->setBackgroundColor({ 1.0f, 0.9f, 0.15f });
-	scene->setAmbientLight({ 0.05f, 0.05f, 0.05f });
+	setupScene();
 
 	camera.setPerspective(45.0f, static_cast<float>(m_window.getSize().x()) / m_window.getSize().y(), 0.1f, 1000.0f);
 }
 
 Application::~Application()
 {
+	m_scene.clear();
 	EventManager::deleteInstance();
-	Scene::deleteInstance();
+	MeshManager::deleteInstance();
 	Renderer::deleteInstance();
 }
 
@@ -131,4 +132,21 @@ void Application::processCameraControl()
 	camera.addLocalRotation(math::EulerAngles({ rotation.pitch(), 0.0f, 0.0f }));
 	camera.addWorldRotation(math::EulerAngles({0.0f, rotation.yaw(), 0.0f}));
 	camera.update();
+}
+
+void Application::setupScene()
+{
+	auto* meshManager = MeshManager::getInstance();
+
+	m_scene.setBackgroundColor({ 1.0f, 0.9f, 0.15f });
+	m_scene.setAmbientLight({ 0.05f, 0.05f, 0.05f });
+	
+	m_scene.addDirectionalLight({ 0.2f, 0.2f, 0.2f }, { 1.0f, -1.0f, 1.0f });
+	
+	m_scene.addPointLight({ 10.0f, 10.0f, 100.0f }, { 0.0f, 15.0f, 100.0f });
+	m_scene.addPointLight({ 10.0f, 10.0f, 100.0f }, { 0.0f, 11.0f, 50.0f });
+
+	m_scene.addSphereObject({ 0.0f, 0.0f, 100.0f }, 10.0f, { { 1.0f, 0.0f, 0.0f }, 32.0f ,  false });
+
+	m_scene.addMeshObject(meshManager->getUnitCube(), math::Transform({ 0.0f, -10.0f, 50.0f }, math::Quat::Identity(), { 10.0f, 10.0f, 10.0f }), { { 0.0f, 1.0f, 0.0f } , 64.0f, false});
 }

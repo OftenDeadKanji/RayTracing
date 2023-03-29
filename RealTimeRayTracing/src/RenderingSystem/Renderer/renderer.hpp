@@ -1,12 +1,13 @@
 #ifndef __RENDERER_HPP__
 #define __RENDERER_HPP__
 #include "../../Utils/nonCopyable.hpp"
-#include "../../RenderingSystem/Scene/scene.hpp"
 #include <memory>
 #include "glad/glad.h"
+#include "../../Math/mathUtils.hpp"
 
 class Window;
 class Camera;
+class Scene;
 
 class Renderer
 	: public NonCopyable
@@ -23,9 +24,12 @@ public:
 
 	void initScreenTexture(const math::Vec2i& size);
 
+	void setSceneToRender(Scene* scene);
 	void render(const Window& window, const Camera& camera);
 private:
 	static std::unique_ptr<Renderer> s_instance;
+
+	Scene* m_sceneToRender;
 
 	math::Vec2i m_textureSize;
 	std::vector<math::Vec3f> m_texels;
@@ -50,6 +54,11 @@ inline void Renderer::deleteInstance()
 inline Renderer* Renderer::getInstance()
 {
 	return s_instance.get();
+}
+
+inline void Renderer::setSceneToRender(Scene* scene)
+{
+	m_sceneToRender = scene;
 }
 #pragma endregion
 
