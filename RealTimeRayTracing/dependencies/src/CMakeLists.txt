@@ -1,1 +1,2 @@
-add_library(glad "glad.c")
+add_subdirectory("Glad")
+add_subdirectory("ImGui")

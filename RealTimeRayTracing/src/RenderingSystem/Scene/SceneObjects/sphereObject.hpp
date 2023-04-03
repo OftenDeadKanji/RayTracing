@@ -4,22 +4,22 @@
 #include "../../Material/material.hpp"
 
 struct IntersectionInfo;
-class Scene;
 
 class SphereObject
 {
 	friend class Scene;
+	friend class FileWriter;
 public:
 	bool isIntersecting(const math::Ray& ray, IntersectionInfo& outIntersectionInfo);
 
-	const Material& getMaterial() const;
+	std::shared_ptr<Material> getMaterial() const;
 private:
 	math::Sphere m_sphere;
-	Material m_material;
+	std::shared_ptr<Material> m_material;
 };
 
 #pragma region Inline methods definitions
-inline const Material& SphereObject::getMaterial() const
+inline std::shared_ptr<Material> SphereObject::getMaterial() const
 {
 	return m_material;
 }

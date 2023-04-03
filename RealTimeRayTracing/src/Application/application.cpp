@@ -3,6 +3,10 @@
 #include "../RenderingSystem/Renderer/renderer.hpp"
 #include "../ResourceManagers/meshManager.hpp"
 #include <thread>
+#include "ImGui/imgui.h"
+#include "ImGui/imgui_impl_glfw.h"
+#include "ImGui/imgui_impl_opengl3.h"
+#include "../Utils/FileWriter/fileWriter.hpp"
 
 Application::Application()
 {
@@ -16,18 +20,25 @@ Application::Application()
 	renderer->setSceneToRender(&m_scene);
 
 	auto* meshManager = MeshManager::createInstance();
-	meshManager->init();
+	//meshManager->init();
 	
+	auto* materialManager = MaterialManager::createInstance();
+
 	auto* eventManager = EventManager::createInstance();
 	eventManager->addWindowListener(this);
 
-	setupScene();
+	//setupMaterials();
+	//setupScene();
+
+	loadAppData();
 
 	camera.setPerspective(45.0f, static_cast<float>(m_window.getSize().x()) / m_window.getSize().y(), 0.1f, 1000.0f);
 }
 
 Application::~Application()
 {
+	saveAppData();
+
 	m_scene.clear();
 	EventManager::deleteInstance();
 	MeshManager::deleteInstance();
@@ -134,9 +145,40 @@ void Application::processCameraControl()
 	camera.update();
 }
 
+void Application::processImGui()
+{
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
+	ImGui::Begin("Scene objects");
+	ImGui::Text("Objects:");
+	ImGui::End();
+}
+
+void Application::setupMaterials()
+{
+	auto* materialManager = MaterialManager::getInstance();
+
+	auto redMat = std::make_shared<Material>();
+	redMat->color = { 1.0f, 0.0f, 0.0f };
+	redMat->shininess = 32.0f;
+	redMat->isEmmisive = false;
+	
+	materialManager->addMaterial(redMat, "RedMaterial");
+	
+	auto greenMat = std::make_shared<Material>();
+	greenMat->color = { 0.0f, 1.0f, 0.0f };
+	greenMat->shininess = 64.0f;
+	greenMat->isEmmisive = false;
+	
+	materialManager->addMaterial(greenMat, "GreenMaterial");
+}
+
 void Application::setupScene()
 {
 	auto* meshManager = MeshManager::getInstance();
+	auto* materialManager = MaterialManager::getInstance();
 
 	m_scene.setBackgroundColor({ 1.0f, 0.9f, 0.15f });
 	m_scene.setAmbientLight({ 0.05f, 0.05f, 0.05f });
@@ -144,9 +186,40 @@ void Application::setupScene()
 	m_scene.addDirectionalLight({ 0.2f, 0.2f, 0.2f }, { 1.0f, -1.0f, 1.0f });
 	
 	m_scene.addPointLight({ 10.0f, 10.0f, 100.0f }, { 0.0f, 15.0f, 100.0f });
-	m_scene.addPointLight({ 10.0f, 10.0f, 100.0f }, { 0.0f, 11.0f, 50.0f });
+	m_scene.addPointLight({ 10.0f, 100.0f, 100.0f }, { 0.0f, 11.0f, 50.0f });
+	
+	m_scene.addSphereObject({ 0.0f, 0.0f, 100.0f }, 10.0f, materialManager->getMaterial("RedMaterial"));
+	
+	m_scene.addMeshObject(meshManager->getUnitCube(), math::Transform({ 0.0f, -10.0f, 50.0f }, math::Quat::Identity(), { 10.0f, 10.0f, 10.0f }), materialManager->getMaterial("GreenMaterial"));
+}
 
-	m_scene.addSphereObject({ 0.0f, 0.0f, 100.0f }, 10.0f, { { 1.0f, 0.0f, 0.0f }, 32.0f ,  false });
+void Application::saveAppData()
+{
+	FileWriter writer;
 
-	m_scene.addMeshObject(meshManager->getUnitCube(), math::Transform({ 0.0f, -10.0f, 50.0f }, math::Quat::Identity(), { 10.0f, 10.0f, 10.0f }), { { 0.0f, 1.0f, 0.0f } , 64.0f, false});
+	std::ofstream fileMaterials("materials.bin", std::ios::out | std::ios::binary | std::ios::trunc);
+	writer.saveToBinaryFile(fileMaterials, *MaterialManager::getInstance());
+
+	std::ofstream fileMeshes("meshes.bin", std::ios::out | std::ios::binary | std::ios::trunc);
+	writer.saveToBinaryFile(fileMeshes, *MeshManager::getInstance());
+
+	std::ofstream fileScene("scene.bin", std::ios::out | std::ios::binary | std::ios::trunc);
+	writer.saveToBinaryFile(fileScene, m_scene);
+}
+
+void Application::loadAppData()
+{
+	FileWriter writer;
+
+	std::ifstream fileMaterials("materials.bin", std::ios::in | std::ios::binary);
+	if (fileMaterials.is_open())
+	{
+		writer.loadFromBinaryFile(fileMaterials, *MaterialManager::getInstance());
+	}
+
+	std::ifstream fileMeshes("meshes.bin", std::ios::in | std::ios::binary);
+	writer.loadFromBinaryFile(fileMeshes, *MeshManager::getInstance());
+
+	std::ifstream fileScene("scene.bin", std::ios::in | std::ios::binary);
+	writer.loadFromBinaryFile(fileScene, m_scene);
 }

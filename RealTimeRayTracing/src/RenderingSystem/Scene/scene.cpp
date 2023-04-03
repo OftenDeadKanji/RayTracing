@@ -34,6 +34,27 @@ void Scene::render(const Camera& camera, std::vector<math::Vec3f>& outPixels, co
 	m_threadPool.waitToFinish();
 }
 
+void Scene::addPointLight(const math::Vec3f& color, const math::Vec3f& position)
+{
+	m_pointLights.emplace_back(color, position);
+
+	Date date = Date::getCurrentDate();
+	char buffer[100];
+	std::snprintf(buffer, sizeof(buffer), "%04d%02d%02d%02d%02d%02d%03d%03d%03d",
+		date.year, date.month, date.day,
+		date.hour, date.minute, date.second,
+		date.milisecond, date.microsecond, date.nanosecond);
+	std::string matName = "pointLight_" + std::string(buffer);
+
+	auto mat = std::make_shared<Material>();
+	mat->color = color;
+	mat->isEmmisive = true;
+
+	MaterialManager::getInstance()->addMaterial(mat, matName);
+
+	addSphereObject(position, 1.0f, mat);
+}
+
 void Scene::task(std::vector<math::Vec3f>& outPixels, const Camera& camera, int startRow, int endRow, const math::Vec2i& windowResolution, const math::Vec2i& textureResolution)
 {
 	for (int i = startRow; i < endRow; i++)
@@ -56,7 +77,7 @@ void Scene::calculatePixelColor(math::Vec3f& outColor, const Camera& camera, con
 	findIntersection(ray, intersection);
 	if (intersection.occured())
 	{
-		Material material;
+		std::shared_ptr<Material> material;
 		switch (intersection.type)
 		{
 		case IntersectionType::Sphere:
@@ -77,14 +98,14 @@ void Scene::calculatePixelColor(math::Vec3f& outColor, const Camera& camera, con
 			assert(0);
 		}
 
-		if (material.isEmmisive)
+		if (material->isEmmisive)
 		{
-			outColor = material.color.normalized();
+			outColor = material->color.normalized();
 
 			return;
 		}
 
-		math::Vec3f resultColor = m_ambientLight.cwiseProduct(material.color);
+		math::Vec3f resultColor = m_ambientLight.cwiseProduct(material->color);
 		BlinnPhong blinnPhong;
 
 		for (auto& dirLight : m_directionalLights)

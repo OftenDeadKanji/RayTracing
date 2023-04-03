@@ -5,20 +5,21 @@
 #include "../../../Math/transform.hpp"
 
 struct IntersectionInfo;
-class Scene;
 
 class MeshObject
 {
 	friend class Scene;
+	friend class FileWriter;
 public:
 	bool isIntersecting(const math::Ray& ray, IntersectionInfo& outIntersectionInfo);
 
 	void setMesh(std::shared_ptr<Mesh> mesh);
 
-	const Material& getMaterial() const;
+	std::shared_ptr<Material> getMaterial() const;
 private:
 	std::shared_ptr<Mesh> m_mesh;
-	Material m_material;
+
+	std::shared_ptr<Material> m_material;
 	math::Transform m_transform;
 };
 
@@ -29,7 +30,7 @@ inline void MeshObject::setMesh(std::shared_ptr<Mesh> mesh)
 	m_mesh = mesh;
 }
 
-inline const Material& MeshObject::getMaterial() const
+inline std::shared_ptr<Material> MeshObject::getMaterial() const
 {
 	return m_material;
 }

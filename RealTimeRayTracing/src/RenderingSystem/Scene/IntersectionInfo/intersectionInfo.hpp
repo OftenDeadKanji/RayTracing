@@ -1,13 +1,11 @@
 #ifndef __INTERSECTION_INFO_HPP__
 #define __INTERSECTION_INFO_HPP__
 #include "../../../Math/intersection.hpp"
-//#include "../../Material/material.hpp"
 #include "intersectionType.hpp"
 
 struct IntersectionInfo
 {
 	math::Intersection intersection;
-	//Material material;
 	IntersectionType type;
 	void* intersectedObject;
 

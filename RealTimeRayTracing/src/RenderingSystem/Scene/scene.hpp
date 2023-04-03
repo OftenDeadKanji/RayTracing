@@ -7,6 +7,9 @@
 #include "../Lighting/directionalLight.hpp"
 #include "../Lighting/pointLight.hpp"
 #include "../../Utils/ThreadPool/threadPool.hpp"
+#include "../../Utils/Date/date.hpp"
+#include "../../ResourceManagers/materialManager.hpp"
+#include <cstdio>
 
 class Window;
 class Camera;
@@ -16,6 +19,7 @@ struct IntersectionInfo;
 class Scene
 	: public NonCopyable
 {
+	friend class FileWriter;
 public:
 	Scene();
 	~Scene();
@@ -26,8 +30,8 @@ public:
 	void setAmbientLight(const math::Vec3f& ambientLight);
 	void addDirectionalLight(const math::Vec3f& color, const math::Vec3f& direction);
 	void addPointLight(const math::Vec3f& color, const math::Vec3f& position);
-	void addSphereObject(const math::Vec3f& position, float radius, const Material& material);
-	void addMeshObject(std::shared_ptr<Mesh> mesh, const math::Transform& transform, const Material& material);
+	void addSphereObject(const math::Vec3f& position, float radius, std::shared_ptr<Material> material);
+	void addMeshObject(std::shared_ptr<Mesh> mesh, const math::Transform& transform, std::shared_ptr<Material> material);
 
 	void clear();
 private:
@@ -65,20 +69,15 @@ inline void Scene::addDirectionalLight(const math::Vec3f& color, const math::Vec
 {
 	m_directionalLights.emplace_back(color, direction);
 }
-inline void Scene::addPointLight(const math::Vec3f& color, const math::Vec3f& position)
-{
-	m_pointLights.emplace_back(color, position);
-	addSphereObject(position, 1.0f, Material{ .color = color, .isEmmisive = true });
-}
-inline void Scene::addSphereObject(const math::Vec3f& position, float radius, const Material& material)
+inline void Scene::addSphereObject(const math::Vec3f& position, float radius, std::shared_ptr<Material> material)
 {
 	SphereObject sphere;
 	sphere.m_sphere = math::Sphere{ .position = position, .radius = radius };
 	sphere.m_material = material;
-
+	
 	m_spheres.push_back(sphere);
 }
-inline void Scene::addMeshObject(std::shared_ptr<Mesh> mesh, const math::Transform& transform, const Material& material)
+inline void Scene::addMeshObject(std::shared_ptr<Mesh> mesh, const math::Transform& transform, std::shared_ptr<Material> material)
 {
 	MeshObject meshObject;
 	meshObject.m_mesh = mesh;

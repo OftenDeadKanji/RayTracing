@@ -4,6 +4,7 @@
 #include "../Window/window.hpp"
 #include "../Camera/camera.hpp"
 #include "../Scene/scene.hpp"
+#include "ImGui/imgui.h"
 
 std::unique_ptr<Renderer> Renderer::s_instance = nullptr;
 
@@ -139,4 +140,6 @@ void Renderer::render(const Window& window, const Camera& camera)
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_textureSize.x(), m_textureSize.y(), GL_RGB, GL_FLOAT, m_texels.data());
 
 	glDrawArrays(GL_TRIANGLES, 0, 3);
+
+	ImGui::Render();
 }

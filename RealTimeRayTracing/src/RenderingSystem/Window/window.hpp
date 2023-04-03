@@ -4,6 +4,8 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include <vector>
+#include "ImGui/imgui.h"
+#include "ImGui/imgui_impl_opengl3.h"
 
 class Window
 {
@@ -28,11 +30,19 @@ private:
 	void createFullsreenWindow();
 
 	void centerWindow();
+
+#ifndef _DIST
+	void initImGui();
+#endif
 };
 
 #pragma region Inline methods definitions
 inline void Window::flush()
 {
+#ifndef _DIST
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+#endif
+
 	glfwSwapBuffers(m_glfwWindow);
 }
 

@@ -1,8 +1,14 @@
 ﻿cmake_minimum_required(VERSION 3.20)
 project (RealTimeRayTracing)
 
+#message("C++ compiler: ${CMAKE_CXX_COMPILER}")
+#message("C++ compiler version: ${CMAKE_CXX_COMPILER_VERSION}")
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+message("C++ compiler: ${CMAKE_CXX_COMPILER}")
+message("C++ compiler version: ${CMAKE_CXX_COMPILER_VERSION}")
 
 add_executable(RTRT "")
 add_subdirectory("src")
@@ -23,10 +29,9 @@ if(CMAKE_BUILD_TYPE MATCHES "Debug")
 	string(APPEND LIB_DIR "debug/")
 
 	add_compile_definitions(_DEBUG)
-elseif(CMAKE_BUILD_TYPE MATCHES "Release")
+elseif(CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo")
 	message("${MSG_PREFIX}Release configuration detected!")
 	string(APPEND LIB_DIR "release/")
-
 
 	add_compile_definitions(_RELEASE)
 elseif(CMAKE_BUILD_TYPE MATCHES "Dist")
@@ -65,7 +70,7 @@ message("${MSG_PREFIX}OpenGL found - \"${LIB_OPENGL}\"")
 find_library(LIB_GLFW NAMES glfw3 PATHS ${LIB_DIR} REQUIRED)
 message("${MSG_PREFIX}GLFW found - \"${LIB_GLFW}\"")
 
-target_link_libraries(RTRT PRIVATE glad ${LIB_OPENGL} ${LIB_GLFW})
+target_link_libraries(RTRT PRIVATE glad ImGui ${LIB_OPENGL} ${LIB_GLFW})
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
 	target_link_libraries(RTRT PRIVATE X11)
