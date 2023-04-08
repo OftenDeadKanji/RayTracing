@@ -29,6 +29,7 @@ private:
 	static std::unique_ptr<MeshManager> s_instance;
 
 	std::unordered_map<std::string, std::shared_ptr<Mesh>> m_meshes;
+	std::unordered_map<std::string, std::shared_ptr<Mesh>> m_predefinedMeshes;
 
 	const std::string PREDEFINED_MESH_NAME_CUBE = "UNIT_CUBE";
 	
@@ -59,7 +60,17 @@ inline void MeshManager::deleteInstance()
 
 inline std::shared_ptr<Mesh> MeshManager::getMesh(const std::string& name)
 {
-	return m_meshes[name];
+	if (auto pos = m_meshes.find(name); pos != m_meshes.end())
+	{
+		return pos->second;
+	}
+
+	if (auto pos = m_predefinedMeshes.find(name); pos != m_predefinedMeshes.end())
+	{
+		return pos->second;
+	}
+
+	return {};
 }
 
 inline const std::string& MeshManager::getMeshName(std::shared_ptr<Mesh> mesh)
@@ -77,7 +88,7 @@ inline const std::string& MeshManager::getMeshName(std::shared_ptr<Mesh> mesh)
 
 inline std::shared_ptr<Mesh> MeshManager::getUnitCube()
 {
-	return m_meshes[PREDEFINED_MESH_NAME_CUBE];
+	return m_predefinedMeshes[PREDEFINED_MESH_NAME_CUBE];
 }
 
 inline const std::string& MeshManager::getUnitCubeMeshName()

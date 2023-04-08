@@ -44,5 +44,5 @@ void MeshManager::createUnitCube()
 	mesh->triangles.push_back({ {BLB, FLB, FRB}, {0.0f, -1.0f, 0.0f} });
 	mesh->triangles.push_back({ {BLB, FRB, BRB}, {0.0f, -1.0f, 0.0f} });
 
-	m_meshes.insert({ PREDEFINED_MESH_NAME_CUBE, mesh });
+	m_predefinedMeshes.insert({ PREDEFINED_MESH_NAME_CUBE, mesh });
 }

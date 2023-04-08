@@ -23,7 +23,7 @@ Application::Application()
 	auto* transformManager = TransformManager::createInstance();
 
 	auto* meshManager = MeshManager::createInstance();
-	//meshManager->init();
+	meshManager->init();
 	
 	auto* materialManager = MaterialManager::createInstance();
 
@@ -200,16 +200,16 @@ void Application::saveAppData()
 {
 	FileWriter writer;
 
-	std::ofstream fileMaterials("materials.bin", std::ios::out | std::ios::binary | std::ios::trunc);
+	std::ofstream fileMaterials("data/materials.bin", std::ios::out | std::ios::binary | std::ios::trunc);
 	writer.saveToBinaryFile(fileMaterials, *MaterialManager::getInstance());
 
-	std::ofstream fileTransforms("transforms.bin", std::ios::out | std::ios::binary | std::ios::trunc);
+	std::ofstream fileTransforms("data/transforms.bin", std::ios::out | std::ios::binary | std::ios::trunc);
 	writer.saveToBinaryFile(fileTransforms, *TransformManager::getInstance());
 
-	std::ofstream fileMeshes("meshes.bin", std::ios::out | std::ios::binary | std::ios::trunc);
+	std::ofstream fileMeshes("data/meshes.bin", std::ios::out | std::ios::binary | std::ios::trunc);
 	writer.saveToBinaryFile(fileMeshes, *MeshManager::getInstance());
 
-	std::ofstream fileScene("scene.bin", std::ios::out | std::ios::binary | std::ios::trunc);
+	std::ofstream fileScene("data/scene.bin", std::ios::out | std::ios::binary | std::ios::trunc);
 	writer.saveToBinaryFile(fileScene, m_scene);
 }
 
@@ -217,25 +217,25 @@ void Application::loadAppData()
 {
 	FileWriter writer;
 
-	std::ifstream fileMaterials("materials.bin", std::ios::in | std::ios::binary);
+	std::ifstream fileMaterials("data/materials.bin", std::ios::in | std::ios::binary);
 	if (fileMaterials.is_open())
 	{
 		writer.loadFromBinaryFile(fileMaterials, *MaterialManager::getInstance());
 	}
 
-	std::ifstream fileTransforms("transforms.bin", std::ios::in | std::ios::binary);
+	std::ifstream fileTransforms("data/transforms.bin", std::ios::in | std::ios::binary);
 	if (fileTransforms.is_open())
 	{
 		writer.loadFromBinaryFile(fileTransforms, *TransformManager::getInstance());
 	}
 
-	std::ifstream fileMeshes("meshes.bin", std::ios::in | std::ios::binary);
+	std::ifstream fileMeshes("data/meshes.bin", std::ios::in | std::ios::binary);
 	if (fileMeshes.is_open())
 	{
 		writer.loadFromBinaryFile(fileMeshes, *MeshManager::getInstance());
 	}
 
-	std::ifstream fileScene("scene.bin", std::ios::in | std::ios::binary);
+	std::ifstream fileScene("data/scene.bin", std::ios::in | std::ios::binary);
 	if (fileScene.is_open())
 	{
 		writer.loadFromBinaryFile(fileScene, m_scene);
