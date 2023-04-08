@@ -69,22 +69,6 @@ inline void Scene::addDirectionalLight(const math::Vec3f& color, const math::Vec
 {
 	m_directionalLights.emplace_back(color, direction);
 }
-inline void Scene::addSphereObject(const math::Vec3f& position, float radius, std::shared_ptr<Material> material)
-{
-	SphereObject sphere;
-	sphere.m_sphere = math::Sphere{ .position = position, .radius = radius };
-	sphere.m_material = material;
-	
-	m_spheres.push_back(sphere);
-}
-inline void Scene::addMeshObject(std::shared_ptr<Mesh> mesh, const math::Transform& transform, std::shared_ptr<Material> material)
-{
-	MeshObject meshObject;
-	meshObject.m_mesh = mesh;
-	meshObject.m_transform = transform;
-	meshObject.m_material = material;
-	m_meshes.push_back(meshObject);
-}
 inline void Scene::clear()
 {
 	m_spheres.clear();

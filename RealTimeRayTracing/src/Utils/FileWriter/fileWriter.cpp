@@ -4,7 +4,7 @@
 #include "../cast.hpp"
 #include "../../ResourceManagers/materialManager.hpp"
 #include "../../ResourceManagers/meshManager.hpp"
-#include <iostream>
+#include "../../RenderingSystem/TransformSystem/transformManager.hpp"
 
 void FileWriter::saveToBinaryFile(std::ofstream& file, const MaterialManager& materialManager)
 {
@@ -77,6 +77,76 @@ void FileWriter::loadFromBinaryFile(std::ifstream& file, std::shared_ptr<Materia
 		file.read(rCast(char*, &material->color), sizeof(material->color));
 		file.read(rCast(char*, &material->shininess), sizeof(material->shininess));
 		file.read(rCast(char*, &material->isEmmisive), sizeof(material->isEmmisive));
+	}
+	else
+	{
+		// error ?
+	}
+}
+
+void FileWriter::saveToBinaryFile(std::ofstream& file, const TransformManager& transformManager)
+{
+	auto transformManagerVersion = TransformManagerClassVersion::vCurrent;
+	file.write(rCast(const char*, &transformManagerVersion), sizeof(transformManagerVersion));
+
+	size_t transformsCount = transformManager.m_transforms.size();
+	file.write(rCast(const char*, &transformsCount), sizeof(transformsCount));
+
+	for (auto cIter = transformManager.m_transforms.cbegin(); cIter != transformManager.m_transforms.cend(); cIter++)
+	{
+		file.write(rCast(const char*, &cIter->first), sizeof(cIter->first));
+		file.write(rCast(const char*, &cIter->second), sizeof(cIter->second));
+	}
+
+	file.write(rCast(const char*, &transformManager.m_nextID), sizeof(transformManager.m_nextID));
+
+	size_t freeIDsCount = transformManager.m_freeIDs.size();
+	file.write(rCast(const char*, &freeIDsCount), sizeof(freeIDsCount));
+
+	auto freeIDs = transformManager.m_freeIDs;
+
+	while (!freeIDs.empty())
+	{
+		unsigned int nextID = freeIDs.front();
+		freeIDs.pop();
+
+		file.write(rCast(const char*, &freeIDs), sizeof(freeIDs));
+	}
+}
+
+void FileWriter::loadFromBinaryFile(std::ifstream& file, TransformManager& transformManager)
+{
+	TransformManagerClassVersion transformManagerVersion;
+	file.read(rCast(char*, &transformManagerVersion), sizeof(transformManagerVersion));
+
+	if (transformManagerVersion == TransformManagerClassVersion::v1_0)
+	{
+		size_t transformsCount;
+		file.read(rCast(char*, &transformsCount), sizeof(transformsCount));
+
+		for (int i = 0; i < transformsCount; i++)
+		{
+			unsigned int id;
+			file.read(rCast(char*, &id), sizeof(id));
+
+			math::Transform transform;
+			file.read(rCast(char*, &transform), sizeof(transform));
+
+			transformManager.m_transforms[id] = transform;
+		}
+
+		file.read(rCast(char*, &transformManager.m_nextID), sizeof(transformManager.m_nextID));
+
+		size_t freeIDsCount;
+		file.read(rCast(char*, &freeIDsCount), sizeof(freeIDsCount));
+
+		for (int i = 0; i < freeIDsCount; i++)
+		{
+			unsigned int id;
+			file.read(rCast(char*, &id), sizeof(id));
+
+			transformManager.m_freeIDs.push(id);
+		}
 	}
 	else
 	{
@@ -286,8 +356,7 @@ void FileWriter::saveToBinaryFile(std::ofstream& file, const SphereObject& spher
 	auto sphereObjectVersion = SphereObjectClassVersion::vCurrent;
 	file.write(rCast(const char*, &sphereObjectVersion), sizeof(sphereObjectVersion));
 
-	file.write(rCast(const char*, &sphere.m_sphere.position), sizeof(sphere.m_sphere.position));
-	file.write(rCast(const char*, &sphere.m_sphere.radius), sizeof(sphere.m_sphere.radius));
+	file.write(rCast(const char*, &sphere.m_transformID), sizeof(sphere.m_transformID));
 
 	const auto& materialName = MaterialManager::getInstance()->getMaterialName(sphere.m_material);
 
@@ -304,12 +373,36 @@ void FileWriter::loadFromBinaryFile(std::ifstream& file, SphereObject& sphere)
 
 	if (sphereObjectVersion == SphereObjectClassVersion::v1_0)
 	{
-		file.read(rCast(char*, &sphere.m_sphere.position), sizeof(sphere.m_sphere.position));
-		file.read(rCast(char*, &sphere.m_sphere.radius), sizeof(sphere.m_sphere.radius));
+		math::Vec3f position;
+		file.read(rCast(char*, &position), sizeof(position));
+
+		float radius;
+		file.read(rCast(char*, &radius), sizeof(radius));
+
+		auto* transformManager = TransformManager::getInstance();
+		auto transform = transformManager->getNewTransform();
+		transform.second.setTranslation(position);
+		transform.second.setScale(math::Vec3f(radius, radius, radius));
+
+		sphere.m_transformID = transform.first;
 
 		size_t nameLength;
 		file.read(rCast(char*, &nameLength), sizeof(nameLength));
-		
+
+		std::string materialName;
+		materialName.resize(nameLength);
+
+		file.read(&materialName[0], nameLength);
+
+		sphere.m_material = MaterialManager::getInstance()->getMaterial(materialName);
+	}
+	else if (sphereObjectVersion == SphereObjectClassVersion::v1_1)
+	{
+		file.read(rCast(char*, &sphere.m_transformID), sizeof(sphere.m_transformID));
+
+		size_t nameLength;
+		file.read(rCast(char*, &nameLength), sizeof(nameLength));
+
 		std::string materialName;
 		materialName.resize(nameLength);
 
@@ -342,7 +435,7 @@ void FileWriter::saveToBinaryFile(std::ofstream& file, const MeshObject& mesh)
 
 	file.write(materialName.c_str(), materialNameLength);
 
-	file.write(rCast(const char*, &mesh.m_transform), sizeof(mesh.m_transform));
+	file.write(rCast(const char*, &mesh.m_transformID), sizeof(mesh.m_transformID));
 }
 
 void FileWriter::loadFromBinaryFile(std::ifstream& file, MeshObject& mesh)
@@ -372,7 +465,38 @@ void FileWriter::loadFromBinaryFile(std::ifstream& file, MeshObject& mesh)
 
 		mesh.m_material = MaterialManager::getInstance()->getMaterial(materialName);
 
-		file.read(rCast(char*, &mesh.m_transform), sizeof(mesh.m_transform));
+		math::Transform transform;
+		file.read(rCast(char*, &transform), sizeof(math::Transform));
+
+		auto* transformManager = TransformManager::getInstance();
+		auto newTransform = transformManager->getNewTransform();
+		newTransform.second = transform;
+
+		mesh.m_transformID = newTransform.first;
+	}
+	else if (meshObjectVersion == MeshObjectClassVersion::v1_1)
+	{
+		size_t meshNameLength;
+		file.read(rCast(char*, &meshNameLength), sizeof(meshNameLength));
+
+		std::string meshName;
+		meshName.resize(meshNameLength);
+
+		file.read(&meshName[0], meshNameLength);
+
+		mesh.m_mesh = MeshManager::getInstance()->getMesh(meshName);
+
+		size_t materialNameLength;
+		file.read(rCast(char*, &materialNameLength), sizeof(materialNameLength));
+
+		std::string materialName;
+		materialName.resize(materialNameLength);
+
+		file.read(&materialName[0], materialNameLength);
+
+		mesh.m_material = MaterialManager::getInstance()->getMaterial(materialName);
+
+		file.read(rCast(char*, &mesh.m_transformID), sizeof(mesh.m_transformID));
 	}
 	else
 	{

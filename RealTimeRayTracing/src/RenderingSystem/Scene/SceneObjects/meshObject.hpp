@@ -2,7 +2,7 @@
 #define __MESH_OBJECT_HPP__
 #include "../../Mesh/mesh.hpp"
 #include "../../Material/material.hpp"
-#include "../../../Math/transform.hpp"
+#include "../../TransformSystem/transformManager.hpp"
 
 struct IntersectionInfo;
 
@@ -20,7 +20,7 @@ private:
 	std::shared_ptr<Mesh> m_mesh;
 
 	std::shared_ptr<Material> m_material;
-	math::Transform m_transform;
+	TransformManager::TransformID m_transformID;
 };
 
 #pragma region Inline methods definitions

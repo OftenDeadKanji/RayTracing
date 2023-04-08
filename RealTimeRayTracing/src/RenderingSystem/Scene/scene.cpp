@@ -127,6 +127,8 @@ void Scene::calculatePixelColor(math::Vec3f& outColor, const Camera& camera, con
 
 void Scene::findIntersection(const math::Ray& ray, IntersectionInfo& outIntersection)
 {
+	auto* transformManager = TransformManager::getInstance();
+
 	for (auto& sphere : m_spheres)
 	{
 		sphere.isIntersecting(ray, outIntersection);
@@ -135,15 +137,48 @@ void Scene::findIntersection(const math::Ray& ray, IntersectionInfo& outIntersec
 	{
 		math::Ray rayInMS (ray);
 
-		mesh.m_transform.globalToLocal(rayInMS.origin, 1.0f);
-		mesh.m_transform.globalToLocal(rayInMS.direction, 0.0f);
+		transformManager->getTransform(mesh.m_transformID).globalToLocal(rayInMS.origin, 1.0f);
+		transformManager->getTransform(mesh.m_transformID).globalToLocal(rayInMS.direction, 0.0f);
 
 		if (mesh.isIntersecting(rayInMS, outIntersection))
 		{
-			mesh.m_transform.localToGlobal(outIntersection.intersection.point, 1.0f);
-			mesh.m_transform.localToGlobal(outIntersection.intersection.normal, 0.0f);
+			transformManager->getTransform(mesh.m_transformID).localToGlobal(outIntersection.intersection.point, 1.0f);
+			transformManager->getTransform(mesh.m_transformID).localToGlobal(outIntersection.intersection.normal, 0.0f);
 
 			outIntersection.intersection.normal.normalize();
 		}
 	}
+}
+
+void Scene::addSphereObject(const math::Vec3f& position, float radius, std::shared_ptr<Material> material)
+{
+	SphereObject sphere;
+
+	auto* transformManager = TransformManager::getInstance();
+	auto newTransform = transformManager->getNewTransform();
+	
+	newTransform.second.setTranslation(position);
+	newTransform.second.setScale(math::Vec3f(radius, radius, radius));
+	
+	sphere.m_transformID = newTransform.first;
+
+	sphere.m_material = material;
+
+	m_spheres.push_back(sphere);
+}
+
+void Scene::addMeshObject(std::shared_ptr<Mesh> mesh, const math::Transform& transform, std::shared_ptr<Material> material)
+{
+	MeshObject meshObject;
+	meshObject.m_mesh = mesh;
+
+	auto* transformManager = TransformManager::getInstance();
+	auto newTransform = transformManager->getNewTransform();
+	
+	newTransform.second = transform;
+
+	meshObject.m_transformID = newTransform.first;
+
+	meshObject.m_material = material;
+	m_meshes.push_back(meshObject);
 }

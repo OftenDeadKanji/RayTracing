@@ -2,6 +2,7 @@
 #define __SPHERE_OBJECT_HPP__
 #include "../../../Math/sphere.hpp"
 #include "../../Material/material.hpp"
+#include "../../TransformSystem/transformManager.hpp"
 
 struct IntersectionInfo;
 
@@ -14,8 +15,8 @@ public:
 
 	std::shared_ptr<Material> getMaterial() const;
 private:
-	math::Sphere m_sphere;
 	std::shared_ptr<Material> m_material;
+	TransformManager::TransformID m_transformID;
 };
 
 #pragma region Inline methods definitions

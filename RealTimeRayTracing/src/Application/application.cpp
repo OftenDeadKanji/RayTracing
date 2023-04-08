@@ -7,6 +7,7 @@
 #include "ImGui/imgui_impl_glfw.h"
 #include "ImGui/imgui_impl_opengl3.h"
 #include "../Utils/FileWriter/fileWriter.hpp"
+#include "../RenderingSystem/TransformSystem/transformManager.hpp"
 
 Application::Application()
 {
@@ -18,6 +19,8 @@ Application::Application()
 	renderer->initScreenTexture(m_window.getSize() / 2);
 	
 	renderer->setSceneToRender(&m_scene);
+
+	auto* transformManager = TransformManager::createInstance();
 
 	auto* meshManager = MeshManager::createInstance();
 	//meshManager->init();
@@ -200,6 +203,9 @@ void Application::saveAppData()
 	std::ofstream fileMaterials("materials.bin", std::ios::out | std::ios::binary | std::ios::trunc);
 	writer.saveToBinaryFile(fileMaterials, *MaterialManager::getInstance());
 
+	std::ofstream fileTransforms("transforms.bin", std::ios::out | std::ios::binary | std::ios::trunc);
+	writer.saveToBinaryFile(fileTransforms, *TransformManager::getInstance());
+
 	std::ofstream fileMeshes("meshes.bin", std::ios::out | std::ios::binary | std::ios::trunc);
 	writer.saveToBinaryFile(fileMeshes, *MeshManager::getInstance());
 
@@ -217,9 +223,21 @@ void Application::loadAppData()
 		writer.loadFromBinaryFile(fileMaterials, *MaterialManager::getInstance());
 	}
 
+	std::ifstream fileTransforms("transforms.bin", std::ios::in | std::ios::binary);
+	if (fileTransforms.is_open())
+	{
+		writer.loadFromBinaryFile(fileTransforms, *TransformManager::getInstance());
+	}
+
 	std::ifstream fileMeshes("meshes.bin", std::ios::in | std::ios::binary);
-	writer.loadFromBinaryFile(fileMeshes, *MeshManager::getInstance());
+	if (fileMeshes.is_open())
+	{
+		writer.loadFromBinaryFile(fileMeshes, *MeshManager::getInstance());
+	}
 
 	std::ifstream fileScene("scene.bin", std::ios::in | std::ios::binary);
-	writer.loadFromBinaryFile(fileScene, m_scene);
+	if (fileScene.is_open())
+	{
+		writer.loadFromBinaryFile(fileScene, m_scene);
+	}
 }

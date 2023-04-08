@@ -1,14 +1,8 @@
 ﻿cmake_minimum_required(VERSION 3.20)
 project (RealTimeRayTracing)
 
-#message("C++ compiler: ${CMAKE_CXX_COMPILER}")
-#message("C++ compiler version: ${CMAKE_CXX_COMPILER_VERSION}")
-
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-message("C++ compiler: ${CMAKE_CXX_COMPILER}")
-message("C++ compiler version: ${CMAKE_CXX_COMPILER_VERSION}")
 
 add_executable(RTRT "")
 add_subdirectory("src")
@@ -56,7 +50,6 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
 else()
 	message(FATAL_ERROR "${MSG_PREFIX}Unknown compiler detected! - ${CMAKE_CXX_COMPILER_ID}")
 endif()
-
 
 #
 # Libraries files

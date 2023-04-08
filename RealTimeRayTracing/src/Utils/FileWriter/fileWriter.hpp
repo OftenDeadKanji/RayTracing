@@ -6,6 +6,8 @@
 class MaterialManager;
 struct Material;
 
+class TransformManager;
+
 class MeshManager;
 class Mesh;
 struct Triangle;
@@ -25,6 +27,9 @@ public:
 
 	void saveToBinaryFile(std::ofstream& file, std::shared_ptr<const Material> material);
 	void loadFromBinaryFile(std::ifstream& file, std::shared_ptr<Material> material);
+
+	void saveToBinaryFile(std::ofstream& file, const TransformManager& transformManager);
+	void loadFromBinaryFile(std::ifstream& file, TransformManager& transformManager);
 
 	void saveToBinaryFile(std::ofstream& file, const MeshManager& meshManager);
 	void loadFromBinaryFile(std::ifstream& file, MeshManager& meshManager);
@@ -63,6 +68,13 @@ private:
 		vCurrent = v1_0
 	};
 
+	enum class TransformManagerClassVersion
+	{
+		v1_0,
+
+		vCurrent = v1_0
+	};
+
 	enum class MeshManagerClassVersion
 	{
 		v1_0,
@@ -87,15 +99,17 @@ private:
 	enum class SphereObjectClassVersion
 	{
 		v1_0,
+		v1_1,
 
-		vCurrent = v1_0
+		vCurrent = v1_1
 	};
 
 	enum class MeshObjectClassVersion
 	{
 		v1_0,
+		v1_1,
 
-		vCurrent = v1_0
+		vCurrent = v1_1
 	};
 
 	enum class DirectionalLightClassVersion
