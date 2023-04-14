@@ -20,11 +20,10 @@ public:
 	void deinit();
 
 	std::shared_ptr<Mesh> getMesh(const std::string& name);
-	const std::string& getMeshName(std::shared_ptr<Mesh> mesh);
+	const std::string& getMeshName(std::shared_ptr<Mesh> mesh) const;
 
 	std::shared_ptr<Mesh> getUnitCube();
-	const std::string& getUnitCubeMeshName();
-
+	const std::string& getUnitCubeMeshName() const;
 private:
 	static std::unique_ptr<MeshManager> s_instance;
 
@@ -33,7 +32,7 @@ private:
 
 	const std::string PREDEFINED_MESH_NAME_CUBE = "UNIT_CUBE";
 	
-	const std::string NO_SUCH_MESH_KEY = "";
+	const std::string NO_SUCH_MESH_KEY = "NOT_FOUND";
 
 	void createUnitCube();
 };
@@ -73,9 +72,17 @@ inline std::shared_ptr<Mesh> MeshManager::getMesh(const std::string& name)
 	return {};
 }
 
-inline const std::string& MeshManager::getMeshName(std::shared_ptr<Mesh> mesh)
+inline const std::string& MeshManager::getMeshName(std::shared_ptr<Mesh> mesh) const
 {
 	for (auto iter = m_meshes.cbegin(); iter != m_meshes.cend(); iter++)
+	{
+		if (iter->second == mesh)
+		{
+			return iter->first;
+		}
+	}
+
+	for (auto iter = m_predefinedMeshes.cbegin(); iter != m_predefinedMeshes.cend(); iter++)
 	{
 		if (iter->second == mesh)
 		{
@@ -91,7 +98,7 @@ inline std::shared_ptr<Mesh> MeshManager::getUnitCube()
 	return m_predefinedMeshes[PREDEFINED_MESH_NAME_CUBE];
 }
 
-inline const std::string& MeshManager::getUnitCubeMeshName()
+inline const std::string& MeshManager::getUnitCubeMeshName() const
 {
 	return PREDEFINED_MESH_NAME_CUBE;
 }
