@@ -18,11 +18,12 @@ math::Vec3f BlinnPhong::calculateLighting(const DirectionalLight& light, const m
 
 math::Vec3f BlinnPhong::calculateLighting(const PointLight& light, const math::Vec3f& surfacePoint, const math::Vec3f& surfaceNormal, const math::Vec3f& viewDirection, std::shared_ptr<Material> material)
 {
-	math::Vec3f lightDirection = (light.position - surfacePoint).normalized();
+	auto& lightPosition = TransformManager::getInstance()->getTransform(light.transformID).getTranslation();
+	math::Vec3f lightDirection = (lightPosition - surfacePoint).normalized();
 
 	math::Vec3f blinnPhongResult = calculateLighting(lightDirection, viewDirection, surfaceNormal, material);
 
-	float distance = (light.position - surfacePoint).norm();
+	float distance = (lightPosition - surfacePoint).norm();
 	math::Vec3f result = blinnPhongResult.cwiseProduct(light.color / (distance * distance));
 	return result;
 }

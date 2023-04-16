@@ -261,6 +261,15 @@ void FileWriter::saveToBinaryFile(std::ofstream& file, const Scene& scene)
 		saveToBinaryFile(file, *cIter);
 	}
 	
+	//m_pointLightsVisualizations
+	size_t pointLightVisCount = scene.m_pointLightsVisualizations.size();
+	file.write(rCast(const char*, &pointLightVisCount), sizeof(pointLightVisCount));
+
+	for (auto cIter = scene.m_pointLightsVisualizations.cbegin(); cIter != scene.m_pointLightsVisualizations.cend(); cIter++)
+	{
+		saveToBinaryFile(file, *cIter);
+	}
+
 	//m_meshes
 	size_t meshesCount = scene.m_meshes.size();
 	file.write(rCast(const char*, &meshesCount), sizeof(meshesCount));
@@ -273,6 +282,7 @@ void FileWriter::saveToBinaryFile(std::ofstream& file, const Scene& scene)
 	//lights
 	file.write(rCast(const char*, &scene.m_ambientLight), sizeof(scene.m_ambientLight));
 
+	//dir lights
 	size_t dirLightsCount = scene.m_directionalLights.size();
 	file.write(rCast(const char*, &dirLightsCount), sizeof(dirLightsCount));
 
@@ -281,6 +291,7 @@ void FileWriter::saveToBinaryFile(std::ofstream& file, const Scene& scene)
 		saveToBinaryFile(file, dirLight);
 	}
 
+	//point lights
 	size_t pointLightsCount = scene.m_pointLights.size();
 	file.write(rCast(const char*, &pointLightsCount), sizeof(pointLightsCount));
 
@@ -309,6 +320,67 @@ void FileWriter::loadFromBinaryFile(std::ifstream& file, Scene& scene)
 		for (int i = 0; i < spheresCount; i++)
 		{
 			loadFromBinaryFile(file, scene.m_spheres[i]);
+		}
+
+		//m_meshes
+		size_t meshesCount;
+		file.read(rCast(char*, &meshesCount), sizeof(meshesCount));
+
+		scene.m_meshes.resize(meshesCount);
+
+		for (int i = 0; i < meshesCount; i++)
+		{
+			loadFromBinaryFile(file, scene.m_meshes[i]);
+		}
+
+		//lights
+		file.read(rCast(char*, &scene.m_ambientLight), sizeof(scene.m_ambientLight));
+
+		size_t dirLightsCount;
+		file.read(rCast(char*, &dirLightsCount), sizeof(dirLightsCount));
+
+		scene.m_directionalLights.resize(dirLightsCount);
+
+		for (int i = 0; i < dirLightsCount; i++)
+		{
+			loadFromBinaryFile(file, scene.m_directionalLights[i]);
+		}
+
+		size_t pointLightsCount;
+		file.read(rCast(char*, &pointLightsCount), sizeof(pointLightsCount));
+
+		scene.m_pointLights.resize(pointLightsCount);
+
+		for (int i = 0; i < pointLightsCount; i++)
+		{
+			loadFromBinaryFile(file, scene.m_pointLights[i]);
+		}
+	}
+	if (sceneVersion == SceneClassVersion::v1_1)
+	{
+		//m_backgroundColor
+		file.read(rCast(char*, &scene.m_backgroundColor), sizeof(scene.m_backgroundColor));
+
+		//m_spheres
+		size_t spheresCount;
+		file.read(rCast(char*, &spheresCount), sizeof(spheresCount));
+
+		scene.m_spheres.resize(spheresCount);
+
+		for (int i = 0; i < spheresCount; i++)
+		{
+			loadFromBinaryFile(file, scene.m_spheres[i]);
+		}
+
+		//m_pointLightsVisualizations
+		size_t pointLightVisCount;
+		file.read(rCast(char*, &pointLightVisCount), sizeof(pointLightVisCount));
+
+		scene.m_pointLightsVisualizations.resize(pointLightVisCount);
+
+		for (int i = 0; i < pointLightVisCount; i++)
+		{
+			loadFromBinaryFile(file, scene.m_pointLightsVisualizations[i]);
 		}
 
 		//m_meshes
@@ -531,7 +603,7 @@ void FileWriter::saveToBinaryFile(std::ofstream& file, const PointLight& light)
 	file.write(rCast(const char*, &lightVersion), sizeof(lightVersion));
 
 	file.write(rCast(const char*, &light.color), sizeof(light.color));
-	file.write(rCast(const char*, &light.position), sizeof(light.position));
+	file.write(rCast(const char*, &light.transformID), sizeof(light.transformID));
 }
 
 void FileWriter::loadFromBinaryFile(std::ifstream& file, PointLight& light)
@@ -542,6 +614,19 @@ void FileWriter::loadFromBinaryFile(std::ifstream& file, PointLight& light)
 	if (lightVersion == PointLightClassVersion::v1_0)
 	{
 		file.read(rCast(char*, &light.color), sizeof(light.color));
-		file.read(rCast(char*, &light.position), sizeof(light.position));
+		
+		math::Vec3f position;
+		file.read(rCast(char*, &position), sizeof(position));
+
+		auto* transformManager = TransformManager::getInstance();
+		auto transform = transformManager->getNewTransform();
+
+		transform.second.setTranslation(position);
+		light.transformID = transform.first;
+	}
+	else if (lightVersion == PointLightClassVersion::v1_1)
+	{
+		file.read(rCast(char*, &light.color), sizeof(light.color));
+		file.read(rCast(char*, &light.transformID), sizeof(light.transformID));
 	}
 }

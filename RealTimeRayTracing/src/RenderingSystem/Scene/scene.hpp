@@ -31,16 +31,24 @@ public:
 	void addDirectionalLight(const math::Vec3f& color, const math::Vec3f& direction);
 	void addPointLight(const math::Vec3f& color, const math::Vec3f& position);
 	void addSphereObject(const math::Vec3f& position, float radius, std::shared_ptr<Material> material);
+	void addSphereObject(TransformManager::TransformID transformID, std::shared_ptr<Material> material);
 	void addMeshObject(std::shared_ptr<Mesh> mesh, const math::Transform& transform, std::shared_ptr<Material> material);
+
+	std::vector<SphereObject>& getSphereObjects();
+	std::vector<MeshObject>& getMeshObjects();
+
+	std::vector<PointLight>& getPointLights();
+	std::vector<SphereObject>& getPointLightsVisualizations();
 
 	void clear();
 private:
 	ThreadPool m_threadPool;
 
-	math::Vec3f m_backgroundColor;
+	math::Vec3f m_backgroundColor{ 1.0f, 1.0f, 1.0f };
 	
 	//objects
 	std::vector<SphereObject> m_spheres;
+	std::vector<SphereObject> m_pointLightsVisualizations;
 	std::vector<MeshObject> m_meshes;
 
 	//lights
@@ -69,9 +77,30 @@ inline void Scene::addDirectionalLight(const math::Vec3f& color, const math::Vec
 {
 	m_directionalLights.emplace_back(color, direction);
 }
+
+inline std::vector<SphereObject>& Scene::getSphereObjects()
+{
+	return m_spheres;
+}
+inline std::vector<MeshObject>& Scene::getMeshObjects()
+{
+	return m_meshes;
+}
+
+inline std::vector<PointLight>& Scene::getPointLights()
+{
+	return m_pointLights;
+}
+
+inline std::vector<SphereObject>& Scene::getPointLightsVisualizations()
+{
+	return m_pointLightsVisualizations;
+}
+
 inline void Scene::clear()
 {
 	m_spheres.clear();
+	m_pointLightsVisualizations.clear();
 	m_meshes.clear();
 	m_directionalLights.clear();
 	m_pointLights.clear();

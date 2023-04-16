@@ -36,7 +36,12 @@ void Scene::render(const Camera& camera, std::vector<math::Vec3f>& outPixels, co
 
 void Scene::addPointLight(const math::Vec3f& color, const math::Vec3f& position)
 {
-	m_pointLights.emplace_back(color, position);
+	auto* transformManager = TransformManager::getInstance();
+	auto transform = transformManager->getNewTransform();
+	
+	transform.second.setTranslation(position);
+	
+	m_pointLights.emplace_back(color, transform.first);
 
 	Date date = Date::getCurrentDate();
 	char buffer[100];
@@ -52,7 +57,11 @@ void Scene::addPointLight(const math::Vec3f& color, const math::Vec3f& position)
 
 	MaterialManager::getInstance()->addMaterial(mat, matName);
 
-	addSphereObject(position, 1.0f, mat);
+	SphereObject visualization;
+	visualization.m_transformID = transform.first;
+	visualization.m_material = mat;
+
+	m_pointLightsVisualizations.push_back(visualization);
 }
 
 void Scene::task(std::vector<math::Vec3f>& outPixels, const Camera& camera, int startRow, int endRow, const math::Vec2i& windowResolution, const math::Vec2i& textureResolution)
@@ -100,7 +109,7 @@ void Scene::calculatePixelColor(math::Vec3f& outColor, const Camera& camera, con
 
 		if (material->isEmmisive)
 		{
-			outColor = material->color.normalized();
+			outColor = material->color;
 
 			return;
 		}
@@ -133,6 +142,11 @@ void Scene::findIntersection(const math::Ray& ray, IntersectionInfo& outIntersec
 	{
 		sphere.isIntersecting(ray, outIntersection);
 	}
+
+	for (auto& sphere : m_pointLightsVisualizations)
+	{
+		sphere.isIntersecting(ray, outIntersection);
+	}
 	for (auto& mesh : m_meshes)
 	{
 		math::Ray rayInMS (ray);
@@ -162,6 +176,16 @@ void Scene::addSphereObject(const math::Vec3f& position, float radius, std::shar
 	
 	sphere.m_transformID = newTransform.first;
 
+	sphere.m_material = material;
+
+	m_spheres.push_back(sphere);
+}
+
+void Scene::addSphereObject(TransformManager::TransformID transformID, std::shared_ptr<Material> material)
+{
+	SphereObject sphere;
+
+	sphere.m_transformID = transformID;
 	sphere.m_material = material;
 
 	m_spheres.push_back(sphere);

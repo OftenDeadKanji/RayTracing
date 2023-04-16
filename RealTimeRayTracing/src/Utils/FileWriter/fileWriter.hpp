@@ -52,7 +52,6 @@ public:
 	void saveToBinaryFile(std::ofstream& file, const PointLight& light);
 	void loadFromBinaryFile(std::ifstream& file, PointLight& light);
 
-
 private:
 	enum class MaterialManagerClassVersion
 	{
@@ -92,8 +91,9 @@ private:
 	enum class SceneClassVersion
 	{
 		v1_0,
+		v1_1,
 
-		vCurrent = v1_0
+		vCurrent = v1_1
 	};
 
 	enum class SphereObjectClassVersion
@@ -122,8 +122,9 @@ private:
 	enum class PointLightClassVersion
 	{
 		v1_0,
+		v1_1,
 
-		vCurrent = v1_0
+		vCurrent = v1_1
 	};
 };
 
